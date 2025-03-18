@@ -7,8 +7,8 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.4.3</version>
-		<relativePath/>
+		<version>3.2.4</version>
+		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 
 	<groupId>org.mql.hospital</groupId>
@@ -26,9 +26,17 @@
 	</modules>
 
 	<properties>
+		<!-- Uniformisation de la version Java à 17 -->
 		<java.version>17</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<!-- Ajout des versions des logs -->
+		<logback.version>1.4.11</logback.version>
+		<slf4j.version>2.0.7</slf4j.version>
+		<!-- Spécifier la version de lombok -->
+		<lombok.version>1.18.30</lombok.version>
+		<!-- Spécifier explicitement la version de Spring Boot -->
+		<spring-boot.version>3.2.4</spring-boot.version>
 	</properties>
 
 	<dependencyManagement>
@@ -54,6 +62,7 @@
 				<artifactId>hospital-web</artifactId>
 				<version>${project.version}</version>
 			</dependency>
+			<!-- Dépendances externes -->
 			<dependency>
 				<groupId>org.webjars.npm</groupId>
 				<artifactId>bootstrap-icons</artifactId>
@@ -67,16 +76,29 @@
 			<dependency>
 				<groupId>org.projectlombok</groupId>
 				<artifactId>lombok</artifactId>
+				<version>${lombok.version}</version>
 				<optional>true</optional>
 			</dependency>
+			<!-- Logging -->
+			<dependency>
+				<groupId>ch.qos.logback</groupId>
+				<artifactId>logback-classic</artifactId>
+				<version>${logback.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-api</artifactId>
+				<version>${slf4j.version}</version>
+			</dependency>
+			<!-- Testing -->
 			<dependency>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-starter-test</artifactId>
+				<version>${spring-boot.version}</version>
 				<scope>test</scope>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
-
 
 	<build>
 		<pluginManagement>
@@ -87,6 +109,16 @@
 					<configuration>
 						<source>${java.version}</source>
 						<target>${java.version}</target>
+					</configuration>
+				</plugin>
+				<!-- Plugin pour la génération de la documentation JavaDoc -->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-javadoc-plugin</artifactId>
+					<version>3.5.0</version>
+					<configuration>
+						<show>private</show>
+						<nohelp>true</nohelp>
 					</configuration>
 				</plugin>
 			</plugins>
