@@ -4,46 +4,95 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 >
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+  <meta charset="UTF-8">
+  <title>Title</title>
   <link rel="stylesheet" href="/webjars/bootstrap/5.2.3/css/bootstrap.min.css">
   <script src="/webjars/bootstrap/5.2.3/js/bootstrap.bundle.js"></script>
   <script src="/webjars/jquery/3.6.4/jquery.min.js"></script>
   <link rel="stylesheet" href="/webjars/bootstrap-icons/1.10.3/font/bootstrap-icons.css">
 </head>
-<body>
+<body class="d-flex flex-column min-vh-100">
+<!-- Header -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
   <div class="container-fluid">
-    <a class="navbar-brand" href="#">Navbar</a>
+    <a class="navbar-brand" href="#">
+      <i class="bi bi-hospital fs-4 me-2"></i>
+      Hôpital
+    </a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
-          <a class="nav-link active" aria-current="page" th:href="@{/index}">Home</a>
+          <a class="nav-link" aria-current="page" th:href="@{/home}">Accueil</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">Link</a>
+          <a class="nav-link" th:href="@{/index}">Patients</a>
         </li>
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Patients
+            Actions
           </a>
           <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <li><a class="dropdown-item" th:href="@{/formPatients}">New</a></li>
-            <li><a class="dropdown-item" th:href="@{/index}">List</a></li>
+            <li><a class="dropdown-item" th:href="@{/formPatients}">Nouveau patient</a></li>
+            <li><a class="dropdown-item" th:href="@{/index}">Liste des patients</a></li>
           </ul>
         </li>
         <li class="nav-item">
-          <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
+          <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Rapports</a>
         </li>
       </ul>
+      <form class="d-flex" th:action="@{/index}" method="get">
+        <input class="form-control me-2" type="search" placeholder="Rechercher un patient" name="keyword" aria-label="Search">
+        <button class="btn btn-outline-light" type="submit">
+          <i class="bi bi-search"></i>
+        </button>
+      </form>
     </div>
   </div>
 </nav>
-<div layout:fragment="content">
 
-</div>
+<!-- Main Content -->
+<main class="flex-grow-1">
+  <div layout:fragment="content">
+    <!-- Le contenu spécifique de chaque page sera inséré ici -->
+  </div>
+</main>
+
+<!-- Footer -->
+<footer class="bg-dark text-white py-4 mt-auto">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-4">
+        <h5>Système de Gestion Hospitalière</h5>
+        <p>Une application complète pour la gestion des patients et des services hospitaliers.</p>
+      </div>
+      <div class="col-md-4">
+        <h5>Liens rapides</h5>
+        <ul class="list-unstyled">
+          <li><a class="text-white-50" th:href="@{/home}">Accueil</a></li>
+          <li><a class="text-white-50" th:href="@{/index}">Patients</a></li>
+          <li><a class="text-white-50" th:href="@{/formPatients}">Nouveau patient</a></li>
+        </ul>
+      </div>
+      <div class="col-md-4">
+        <h5>Contact</h5>
+        <address class="text-white-50">
+          <i class="bi bi-geo-alt-fill me-2"></i>123 Avenue Hospitalière<br>
+          <i class="bi bi-telephone-fill me-2"></i>+212 5XX-XXXXXX<br>
+          <i class="bi bi-envelope-fill me-2"></i>contact@hopital.org
+        </address>
+      </div>
+    </div>
+    <hr>
+    <div class="row">
+      <div class="col-12 text-center">
+        <p class="mb-0">&copy; 2025 Système de Gestion Hospitalière. Tous droits réservés.</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
 </body>
 </html>

@@ -26,6 +26,26 @@ public class PatientController {
     private PatientService patientService;
 
     /**
+     * Affiche la page d'accueil.
+     *
+     * @return Le nom de la vue à afficher
+     */
+    @GetMapping("/home")
+    public String home() {
+        return "home";
+    }
+
+    /**
+     * Redirection vers la page d'accueil.
+     *
+     * @return Redirection vers la page d'accueil
+     */
+    @GetMapping("/")
+    public String homeRedirect(){
+        return "redirect:/home";
+    }
+
+    /**
      * Affiche la liste des patients avec pagination et filtrage.
      *
      * @param model Le modèle pour les données à envoyer à la vue
@@ -66,16 +86,6 @@ public class PatientController {
     }
 
     /**
-     * Redirection vers la page d'accueil.
-     *
-     * @return Redirection vers la liste des patients
-     */
-    @GetMapping("/")
-    public String home(){
-        return "redirect:/index";
-    }
-
-    /**
      * Affiche le formulaire de création d'un patient.
      *
      * @param model Le modèle pour les données à envoyer à la vue
@@ -84,6 +94,7 @@ public class PatientController {
     @GetMapping("/formPatients")
     public String formPatient(Model model){
         model.addAttribute("patient", new Patient());
+        model.addAttribute("title", "Ajouter le patient");
         return "formPatients";
     }
 
@@ -115,6 +126,8 @@ public class PatientController {
         Patient patient = patientService.getPatientById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Patient invalide avec l'ID: " + id));
         model.addAttribute("patient", patient);
-        return "editPatient";
+        model.addAttribute("title", "Modifier le patient");
+
+        return "formPatients";
     }
 }
