@@ -1,0 +1,17 @@
+2025-03-19 10:41:24.216 [Thread-5] INFO  o.a.coyote.http11.Http11NioProtocol - Stopping ProtocolHandler ["http-nio-8084"]
+2025-03-19 10:41:24.256 [Thread-5] WARN  o.s.b.f.s.DisposableBeanAdapter - Invocation of destroy method failed on bean with name 'inMemoryDatabaseShutdownExecutor': org.h2.jdbc.JdbcSQLNonTransientConnectionException: La base de données est déjà fermée (pour désactiver la fermeture automatique à l'arrêt de la VM, ajoutez "; DB_CLOSE_ON_EXIT = FALSE" à l'URL db)
+Database is already closed (to disable automatic closing at VM shutdown, add ";DB_CLOSE_ON_EXIT=FALSE" to the db URL) [90121-224]
+2025-03-19 10:41:24.259 [Thread-5] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-03-19 10:41:24.263 [Thread-5] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2025-03-19 10:41:24.581 [restartedMain] INFO  o.m.hospital.HospitalAppApplication - Starting HospitalAppApplication using Java 21.0.6 with PID 10512 (C:\Users\elmehdi.tazi\DEV\multi-modules-hospital-app\hospital-web\target\classes started by elmehdi.tazi in C:\Users\elmehdi.tazi\DEV\multi-modules-hospital-app)
+2025-03-19 10:41:24.581 [restartedMain] INFO  o.m.hospital.HospitalAppApplication - No active profile set, falling back to 1 default profile: "default"
+2025-03-19 10:41:26.486 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8084"]
+2025-03-19 10:41:26.488 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-03-19 10:41:26.488 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.19]
+2025-03-19 10:41:26.587 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-03-19 10:41:26.757 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Starting...
+2025-03-19 10:41:26.759 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-2 - Added connection conn10: url=jdbc:h2:mem:patients-db user=ROOT
+2025-03-19 10:41:26.759 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Start completed.
+2025-03-19 10:41:26.762 [restartedMain] WARN  org.hibernate.orm.deprecation - HHH90000025: H2Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-03-19 10:41:27.520 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8084"]
+2025-03-19 10:41:27.539 [restartedMain] INFO  o.m.hospital.HospitalAppApplication - Started HospitalAppApplication in 3.129 seconds (process running for 150.404)

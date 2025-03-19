@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"org.mql.hospital"},{"l":"org.mql.hospital.config"},{"l":"org.mql.hospital.entities"},{"l":"org.mql.hospital.repository"},{"l":"org.mql.hospital.service"},{"l":"org.mql.hospital.web.controllers"}];updateSearchResults();

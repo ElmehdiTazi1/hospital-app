@@ -23,6 +23,7 @@
 		<module>hospital-repository</module>
 		<module>hospital-service</module>
 		<module>hospital-web</module>
+		<module>hospital-config</module>
 	</modules>
 
 	<properties>
@@ -60,6 +61,11 @@
 			<dependency>
 				<groupId>org.mql.hospital</groupId>
 				<artifactId>hospital-web</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.mql.hospital</groupId>
+				<artifactId>hospital-config</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<!-- Dépendances externes -->
