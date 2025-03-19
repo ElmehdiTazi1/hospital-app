@@ -1,19 +1,48 @@
-# Application de Gestion Hospitalière
+# Système de Gestion Hospitalière
 
-Ce projet est une application de gestion hospitalière développée avec Spring Boot et organisée en architecture multimodule.
+Une application web complète pour la gestion des patients hospitaliers, construite avec Java Spring Boot et suivant une architecture modulaire.
 
 ## Structure du Projet
 
-L'application est divisée en plusieurs modules :
+Ce projet est organisé en modules Maven indépendants :
 
-- **hospital-domain** : Contient les entités JPA et les objets du domaine métier
-- **hospital-repository** : Gère l'accès aux données et les repositories Spring Data JPA
-- **hospital-service** : Contient la logique métier et les services
-- **hospital-web** : Interface utilisateur avec Spring MVC et Thymeleaf
+- **hospital-domain** : Entités et objets du domaine métier
+- **hospital-repository** : Couche d'accès aux données
+- **hospital-service** : Logique métier et services
+- **hospital-web** : Interface utilisateur et contrôleurs
+- **hospital-config** : Configuration partagée (logging, Java doc...)
+
+## Fonctionnalités
+
+- Gestion complète des patients (ajout, modification, suppression)
+- Recherche de patients par nom
+- Pagination des résultats
+- Interface utilisateur responsive avec Bootstrap
+- Validation des formulaires
+- Gestion des erreurs
+
+## Technologies Utilisées
+
+- **Java 17**
+- **Spring Boot 3.2.4**
+- **Spring Data JPA**
+- **Thymeleaf** avec Layout Dialect
+- **Bootstrap 5.2.3**
+- **Bootstrap Icons 1.10.3**
+- **H2 Database** (en mémoire)
+- **Lombok**
+- **SLF4J/Logback** pour la journalisation
+- **Maven** pour la gestion des dépendances
 
 ## Prérequis
 
-- Java 17
-- Maven 3.6+
-- Base de données (H2 en mémoire par défaut)
+- JDK 17+
+- Maven 3.8+
+- Git
 
+## Installation et Démarrage
+
+1. Clonez le dépôt :
+   ```bash
+   git clone https://github.com/votre-nom/hospital-app.git
+   cd hospital-app
