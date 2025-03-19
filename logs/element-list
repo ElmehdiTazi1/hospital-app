@@ -1,6 +1,0 @@
-org.mql.hospital
-org.mql.hospital.config
-org.mql.hospital.entities
-org.mql.hospital.repository
-org.mql.hospital.service
-org.mql.hospital.web.controllers
