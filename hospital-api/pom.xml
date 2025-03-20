@@ -10,27 +10,29 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>hospital-config</artifactId>
-    <name>hospital-config</name>
-    <description>Configuration module for hospital application</description>
+    <artifactId>hospital-api</artifactId>
+    <name>hospital-api</name>
+    <description>API interfaces and DTOs for hospital management</description>
 
     <dependencies>
-        <!-- Spring Boot -->
+        <!-- Spring Data Commons pour Page, Pageable, etc. -->
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.mql.hospital</groupId>
-            <artifactId>hospital-commons</artifactId>
-        </dependency>
-        <!-- JPA support -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-jpa</artifactId>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-commons</artifactId>
         </dependency>
 
-        <!-- Retirez toute dépendance vers hospital-app ou autres modules qui créent des cycles -->
+        <!-- Validation API -->
+        <dependency>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
+        </dependency>
+
+        <!-- Lombok -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
 
         <!-- Tests -->
         <dependency>

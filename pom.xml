@@ -8,7 +8,7 @@
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>3.2.4</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<relativePath/>
 	</parent>
 
 	<groupId>org.mql.hospital</groupId>
@@ -19,30 +19,45 @@
 	<description>Hospital Management Application</description>
 
 	<modules>
+		<module>hospital-api</module>
+		<module>hospital-commons</module>
+		<module>hospital-config</module>
 		<module>hospital-domain</module>
 		<module>hospital-repository</module>
 		<module>hospital-service</module>
 		<module>hospital-web</module>
-		<module>hospital-config</module>
 	</modules>
 
 	<properties>
-		<!-- Uniformisation de la version Java à 17 -->
 		<java.version>17</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<!-- Ajout des versions des logs -->
 		<logback.version>1.4.11</logback.version>
 		<slf4j.version>2.0.7</slf4j.version>
-		<!-- Spécifier la version de lombok -->
 		<lombok.version>1.18.30</lombok.version>
-		<!-- Spécifier explicitement la version de Spring Boot -->
 		<spring-boot.version>3.2.4</spring-boot.version>
+		<bootstrap-icons.version>1.10.3</bootstrap-icons.version>
+		<maven-javadoc-plugin.version>3.5.0</maven-javadoc-plugin.version>
 	</properties>
 
 	<dependencyManagement>
 		<dependencies>
 			<!-- Modules internes -->
+			<dependency>
+				<groupId>org.mql.hospital</groupId>
+				<artifactId>hospital-api</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.mql.hospital</groupId>
+				<artifactId>hospital-commons</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.mql.hospital</groupId>
+				<artifactId>hospital-config</artifactId>
+				<version>${project.version}</version>
+			</dependency>
 			<dependency>
 				<groupId>org.mql.hospital</groupId>
 				<artifactId>hospital-domain</artifactId>
@@ -63,21 +78,17 @@
 				<artifactId>hospital-web</artifactId>
 				<version>${project.version}</version>
 			</dependency>
-			<dependency>
-				<groupId>org.mql.hospital</groupId>
-				<artifactId>hospital-config</artifactId>
-				<version>${project.version}</version>
-			</dependency>
+
 			<!-- Dépendances externes -->
 			<dependency>
 				<groupId>org.webjars.npm</groupId>
 				<artifactId>bootstrap-icons</artifactId>
-				<version>1.10.3</version>
+				<version>${bootstrap-icons.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.webjars</groupId>
 				<artifactId>bootstrap</artifactId>
-				<version>5.2.3</version>
+				<version>${boostrap.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.projectlombok</groupId>
@@ -85,6 +96,7 @@
 				<version>${lombok.version}</version>
 				<optional>true</optional>
 			</dependency>
+
 			<!-- Logging -->
 			<dependency>
 				<groupId>ch.qos.logback</groupId>
@@ -95,13 +107,6 @@
 				<groupId>org.slf4j</groupId>
 				<artifactId>slf4j-api</artifactId>
 				<version>${slf4j.version}</version>
-			</dependency>
-			<!-- Testing -->
-			<dependency>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-starter-test</artifactId>
-				<version>${spring-boot.version}</version>
-				<scope>test</scope>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
@@ -117,11 +122,10 @@
 						<target>${java.version}</target>
 					</configuration>
 				</plugin>
-				<!-- Plugin pour la génération de la documentation JavaDoc -->
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-javadoc-plugin</artifactId>
-					<version>3.5.0</version>
+					<version>${maven-javadoc-plugin.version}</version>
 					<configuration>
 						<show>private</show>
 						<nohelp>true</nohelp>

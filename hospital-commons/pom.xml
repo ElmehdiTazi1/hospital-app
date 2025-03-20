@@ -10,9 +10,9 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>hospital-config</artifactId>
-    <name>hospital-config</name>
-    <description>Configuration module for hospital application</description>
+    <artifactId>hospital-commons</artifactId>
+    <name>hospital-commons</name>
+    <description>Common utilities and configurations for hospital application</description>
 
     <dependencies>
         <!-- Spring Boot -->
@@ -20,17 +20,23 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
         </dependency>
+
+        <!-- Logging -->
         <dependency>
-            <groupId>org.mql.hospital</groupId>
-            <artifactId>hospital-commons</artifactId>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
         </dependency>
-        <!-- JPA support -->
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-jpa</artifactId>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
         </dependency>
 
-        <!-- Retirez toute dépendance vers hospital-app ou autres modules qui créent des cycles -->
+        <!-- Lombok -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
 
         <!-- Tests -->
         <dependency>
