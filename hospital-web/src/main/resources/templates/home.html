@@ -1,77 +1,176 @@
 <!DOCTYPE html>
-<html lang="en"
+<html lang="fr"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="template1.html"
->
+      layout:decorate="template1.html">
 <head>
     <meta charset="UTF-8">
     <title>Accueil - Gestion Hospitalière</title>
+    <style>
+        .feature-card {
+            transition: transform 0.3s ease;
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+        .stats-counter {
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
 <div layout:fragment="content">
     <div class="container py-5">
-        <div class="row">
-            <div class="col-12 text-center mb-4">
+        <!-- Entête -->
+        <div class="row mb-5">
+            <div class="col-12 text-center">
                 <h1 class="display-4">Système de Gestion Hospitalière</h1>
-                <p class="lead">Bienvenue dans votre application de gestion des patients</p>
+                <p class="lead">Plateforme complète pour la gestion des patients, médecins, départements et consultations</p>
             </div>
         </div>
 
-        <div class="row">
+        <!-- Modules principaux -->
+        <div class="row mb-5">
+            <h2 class="mb-4">Modules principaux</h2>
+
+            <!-- Gestion des patients -->
             <div class="col-md-4 mb-4">
-                <div class="card h-100">
+                <div class="card h-100 feature-card shadow-sm">
                     <div class="card-body text-center">
                         <i class="bi bi-people-fill fs-1 text-primary mb-3"></i>
-                        <h3 class="card-title">Gestion des Patients</h3>
+                        <h3 class="card-title">Patients</h3>
                         <p class="card-text">Consultez, ajoutez et modifiez les informations des patients.</p>
-                        <a th:href="@{/index}" class="btn btn-primary">Liste des patients</a>
+                        <a th:href="@{/index}" class="btn btn-primary">Gérer les patients</a>
                     </div>
                 </div>
             </div>
 
+            <!-- Gestion des médecins -->
             <div class="col-md-4 mb-4">
-                <div class="card h-100">
+                <div class="card h-100 feature-card shadow-sm">
                     <div class="card-body text-center">
-                        <i class="bi bi-person-plus-fill fs-1 text-success mb-3"></i>
-                        <h3 class="card-title">Nouveau Patient</h3>
-                        <p class="card-text">Ajoutez un nouveau patient au système.</p>
-                        <a th:href="@{/formPatients}" class="btn btn-success">Ajouter un patient</a>
+                        <i class="bi bi-person-badge-fill fs-1 text-success mb-3"></i>
+                        <h3 class="card-title">Médecins</h3>
+                        <p class="card-text">Gérez les médecins, leurs spécialités et affectations.</p>
+                        <a th:href="@{/medecins}" class="btn btn-success">Gérer les médecins</a>
                     </div>
                 </div>
             </div>
 
+            <!-- Gestion des départements -->
             <div class="col-md-4 mb-4">
-                <div class="card h-100">
+                <div class="card h-100 feature-card shadow-sm">
                     <div class="card-body text-center">
-                        <i class="bi bi-search fs-1 text-info mb-3"></i>
-                        <h3 class="card-title">Recherche</h3>
-                        <p class="card-text">Recherchez des patients par nom ou autres critères.</p>
-                        <a th:href="@{/index}" class="btn btn-info">Rechercher</a>
+                        <i class="bi bi-building fs-1 text-danger mb-3"></i>
+                        <h3 class="card-title">Départements</h3>
+                        <p class="card-text">Administrez les services de l'hôpital et leur organisation.</p>
+                        <a th:href="@{/departements}" class="btn btn-danger">Gérer les départements</a>
                     </div>
                 </div>
             </div>
         </div>
 
+        <!-- Modules secondaires -->
+        <div class="row mb-5">
+            <!-- Rendez-vous -->
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 feature-card shadow-sm">
+                    <div class="card-body text-center">
+                        <i class="bi bi-calendar-check fs-1 text-info mb-3"></i>
+                        <h3 class="card-title">Rendez-vous</h3>
+                        <p class="card-text">Planifiez et suivez les consultations entre patients et médecins.</p>
+                        <a th:href="@{/rendezvous}" class="btn btn-info">Gérer les rendez-vous</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Médicaments -->
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 feature-card shadow-sm">
+                    <div class="card-body text-center">
+                        <i class="bi bi-capsule fs-1 text-warning mb-3"></i>
+                        <h3 class="card-title">Médicaments</h3>
+                        <p class="card-text">Gérez l'inventaire de la pharmacie et suivez les stocks.</p>
+                        <a href="#" class="btn btn-warning">Gérer les médicaments</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Prescriptions -->
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 feature-card shadow-sm">
+                    <div class="card-body text-center">
+                        <i class="bi bi-file-earmark-text fs-1 text-secondary mb-3"></i>
+                        <h3 class="card-title">Prescriptions</h3>
+                        <p class="card-text">Créez et suivez les ordonnances et traitements médicaux.</p>
+                        <a href="#" class="btn btn-secondary">Gérer les prescriptions</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Actions rapides -->
+        <div class="row mb-5">
+            <h2 class="mb-4">Actions rapides</h2>
+            <div class="col-md-3 mb-3">
+                <a th:href="@{/formPatients}" class="card bg-light text-center p-3 text-decoration-none feature-card shadow-sm">
+                    <i class="bi bi-person-plus-fill fs-1 text-primary"></i>
+                    <p class="mt-2 mb-0">Nouveau patient</p>
+                </a>
+            </div>
+            <div class="col-md-3 mb-3">
+                <a th:href="@{/medecins/nouveau}" class="card bg-light text-center p-3 text-decoration-none feature-card shadow-sm">
+                    <i class="bi bi-person-plus-fill fs-1 text-success"></i>
+                    <p class="mt-2 mb-0">Nouveau médecin</p>
+                </a>
+            </div>
+            <div class="col-md-3 mb-3">
+                <a th:href="@{/rendezvous/nouveau}" class="card bg-light text-center p-3 text-decoration-none feature-card shadow-sm">
+                    <i class="bi bi-calendar-plus fs-1 text-info"></i>
+                    <p class="mt-2 mb-0">Nouveau rendez-vous</p>
+                </a>
+            </div>
+            <div class="col-md-3 mb-3">
+                <a th:href="@{/departements/nouveau}" class="card bg-light text-center p-3 text-decoration-none feature-card shadow-sm">
+                    <i class="bi bi-building-add fs-1 text-danger"></i>
+                    <p class="mt-2 mb-0">Nouveau département</p>
+                </a>
+            </div>
+        </div>
+
+        <!-- Statistiques -->
         <div class="row mt-4">
             <div class="col-12">
-                <div class="card">
+                <div class="card shadow">
                     <div class="card-header bg-primary text-white">
-                        <h3 class="card-title mb-0">Statistiques</h3>
+                        <h3 class="card-title mb-0">Statistiques de l'hôpital</h3>
                     </div>
                     <div class="card-body">
                         <div class="row text-center">
-                            <div class="col-md-4">
-                                <h4>Patients enregistrés</h4>
-                                <p class="display-6">5</p>
+                            <div class="col-md-3 mb-3">
+                                <div class="p-3 border rounded">
+                                    <div class="stats-counter text-primary">5</div>
+                                    <h5>Patients enregistrés</h5>
+                                </div>
                             </div>
-                            <div class="col-md-4">
-                                <h4>Patients malades</h4>
-                                <p class="display-6">3</p>
+                            <div class="col-md-3 mb-3">
+                                <div class="p-3 border rounded">
+                                    <div class="stats-counter text-success">0</div>
+                                    <h5>Médecins</h5>
+                                </div>
                             </div>
-                            <div class="col-md-4">
-                                <h4>Score moyen</h4>
-                                <p class="display-6">153</p>
+                            <div class="col-md-3 mb-3">
+                                <div class="p-3 border rounded">
+                                    <div class="stats-counter text-danger">0</div>
+                                    <h5>Départements</h5>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="p-3 border rounded">
+                                    <div class="stats-counter text-info">0</div>
+                                    <h5>Rendez-vous actifs</h5>
+                                </div>
                             </div>
                         </div>
                     </div>

@@ -1,23 +1,34 @@
 <!DOCTYPE html>
-<html lang="en"
+<html lang="fr"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 >
 <head>
   <meta charset="UTF-8">
-  <title>Title</title>
+  <title>Gestion Hospitalière</title>
   <link rel="stylesheet" href="/webjars/bootstrap/5.2.3/css/bootstrap.min.css">
   <script src="/webjars/bootstrap/5.2.3/js/bootstrap.bundle.js"></script>
   <script src="/webjars/jquery/3.6.4/jquery.min.js"></script>
   <link rel="stylesheet" href="/webjars/bootstrap-icons/1.10.3/font/bootstrap-icons.css">
+  <style>
+    .dropdown-menu .dropdown-item:hover {
+      background-color: rgba(var(--bs-primary-rgb), 0.1);
+    }
+    .nav-item .nav-link:hover {
+      color: #fff !important;
+    }
+    .nav-pills .nav-link.active {
+      background-color: #0d6efd;
+    }
+  </style>
 </head>
 <body class="d-flex flex-column min-vh-100">
 <!-- Header -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
   <div class="container-fluid">
-    <a class="navbar-brand" href="#">
+    <a class="navbar-brand" th:href="@{/home}">
       <i class="bi bi-hospital fs-4 me-2"></i>
-      Hôpital
+      Gestion Hospitalière
     </a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
@@ -25,29 +36,76 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
-          <a class="nav-link" aria-current="page" th:href="@{/home}">Accueil</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" th:href="@{/index}">Patients</a>
-        </li>
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Actions
+          <a class="nav-link" aria-current="page" th:href="@{/home}">
+            <i class="bi bi-house-fill me-1"></i> Accueil
           </a>
-          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <li><a class="dropdown-item" th:href="@{/formPatients}">Nouveau patient</a></li>
+        </li>
+
+        <!-- Patients -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="patientsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-people-fill me-1"></i> Patients
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="patientsDropdown">
             <li><a class="dropdown-item" th:href="@{/index}">Liste des patients</a></li>
+            <li><a class="dropdown-item" th:href="@{/formPatients}">Nouveau patient</a></li>
           </ul>
         </li>
+
+        <!-- Médecins -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="medecinsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-person-badge-fill me-1"></i> Médecins
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="medecinsDropdown">
+            <li><a class="dropdown-item" th:href="@{/medecins}">Liste des médecins</a></li>
+            <li><a class="dropdown-item" th:href="@{/medecins/nouveau}">Nouveau médecin</a></li>
+          </ul>
+        </li>
+
+        <!-- Départements -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="departementsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-building me-1"></i> Départements
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="departementsDropdown">
+            <li><a class="dropdown-item" th:href="@{/departements}">Liste des départements</a></li>
+            <li><a class="dropdown-item" th:href="@{/departements/nouveau}">Nouveau département</a></li>
+          </ul>
+        </li>
+
+        <!-- Rendez-vous -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="rdvDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-calendar-check me-1"></i> Rendez-vous
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="rdvDropdown">
+            <li><a class="dropdown-item" th:href="@{/rendezvous}">Liste des rendez-vous</a></li>
+            <li><a class="dropdown-item" th:href="@{/rendezvous/nouveau}">Nouveau rendez-vous</a></li>
+          </ul>
+        </li>
+
+        <!-- Rapports et statistiques -->
         <li class="nav-item">
-          <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Rapports</a>
+          <a class="nav-link" href="#" tabindex="-1">
+            <i class="bi bi-graph-up me-1"></i> Statistiques
+          </a>
         </li>
       </ul>
-      <form class="d-flex" th:action="@{/index}" method="get">
-        <input class="form-control me-2" type="search" placeholder="Rechercher un patient" name="keyword" aria-label="Search">
-        <button class="btn btn-outline-light" type="submit">
-          <i class="bi bi-search"></i>
-        </button>
+
+      <!-- Recherche globale -->
+      <form class="d-flex">
+        <div class="input-group">
+          <select class="form-select form-select-sm" style="max-width: 130px;">
+            <option selected value="patients">Patients</option>
+            <option value="medecins">Médecins</option>
+            <option value="rendezvous">Rendez-vous</option>
+          </select>
+          <input class="form-control" type="search" placeholder="Rechercher..." aria-label="Search">
+          <button class="btn btn-outline-light" type="submit">
+            <i class="bi bi-search"></i>
+          </button>
+        </div>
       </form>
     </div>
   </div>
@@ -66,15 +124,24 @@
     <div class="row">
       <div class="col-md-4">
         <h5>Système de Gestion Hospitalière</h5>
-        <p>Une application complète pour la gestion des patients et des services hospitaliers.</p>
+        <p>Une application complète pour la gestion des patients, médecins, départements et rendez-vous.</p>
       </div>
       <div class="col-md-4">
-        <h5>Liens rapides</h5>
-        <ul class="list-unstyled">
-          <li><a class="text-white-50" th:href="@{/home}">Accueil</a></li>
-          <li><a class="text-white-50" th:href="@{/index}">Patients</a></li>
-          <li><a class="text-white-50" th:href="@{/formPatients}">Nouveau patient</a></li>
-        </ul>
+        <h5>Modules</h5>
+        <div class="row">
+          <div class="col-6">
+            <ul class="list-unstyled">
+              <li><a class="text-white-50" th:href="@{/index}">Patients</a></li>
+              <li><a class="text-white-50" th:href="@{/medecins}">Médecins</a></li>
+            </ul>
+          </div>
+          <div class="col-6">
+            <ul class="list-unstyled">
+              <li><a class="text-white-50" th:href="@{/departements}">Départements</a></li>
+              <li><a class="text-white-50" th:href="@{/rendezvous}">Rendez-vous</a></li>
+            </ul>
+          </div>
+        </div>
       </div>
       <div class="col-md-4">
         <h5>Contact</h5>

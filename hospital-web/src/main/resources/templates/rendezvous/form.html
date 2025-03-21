@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="fr"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="template1.html">
+<head>
+    <meta charset="UTF-8">
+    <title>Liste des Rendez-vous</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="container-fluid py-4">
+        <div class="card">
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <h3 class="mb-0">Liste des Rendez-vous</h3>
+                <a th:href="@{/rendezvous/nouveau}" class="btn btn-light">
+                    <i class="bi bi-plus-circle"></i> Nouveau Rendez-vous
+                </a>
+            </div>
+            <div class="card-body">
+                <!-- Filtres avancés -->
+                <div class="card mb-4">
+                    <div class="card-header bg-light">
+                        <a class="btn btn-sm btn-link text-decoration-none" data-bs-toggle="collapse" href="#filtresCollapse">
+                            <i class="bi bi-funnel"></i> Filtres avancés
+                        </a>
+                    </div>
+                    <div class="collapse" id="filtresCollapse">
+                        <div class="card-body">
+                            <form method="get" th:action="@{/rendezvous}">
+                                <div class="row g-3">
+                                    <!-- Filtre par médecin -->
+                                    <div class="col-md-3">
+                                        <label for="medecinId" class="form-label">Médecin</label>
+                                        <select id="medecinId" name="medecinId" class="form-select">
+                                            <option value="">Tous les médecins</option>
+                                            <option th:each="medecin : ${medecins}"
+                                                    th:value="${medecin.id}"
+                                                    th:text="${medecin.prenom + ' ' + medecin.nom}"
+                                                    th:selected="${medecinId != null && medecinId == medecin.id}">
+                                                Dr. John Doe
+                                            </option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Filtre par patient -->
+                                    <div class="col-md-3">
+                                        <label for="patientId" class="form-label">Patient</label>
+                                        <select id="patientId" name="patientId" class="form-select">
+                                            <option value="">Tous les patients</option>
+                                            <option th:each="patient : ${patients}"
+                                                    th:value="${patient.id}"
+                                                    th:text="${patient.nom}"
+                                                    th:selected="${patientId != null && patientId == patient.id}">
+                                                Patient Name
+                                            </option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Filtre par statut -->
+                                    <div class="col-md-2">
+                                        <label for="statut" class="form-label">Statut</label>
+                                        <select id="statut" name="statut" class="form-select">
+                                            <option value="">Tous les statuts</option>
+                                            <option th:each="s : ${statuts}"
+                                                    th:value="${s}"
+                                                    th:text="${s}"
+                                                    th:selected="${statut != null && statut == s}">
+                                                PLANIFIE
+                                            </option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Filtre par date de début -->
+                                    <div class="col-md-2">
+                                        <label for="debut" class="form-label">Date début</label>
+                                        <input type="date" id="debut" name="debut" class="form-control" th:value="${debut}">
+                                    </div>
+
+                                    <!-- Filtre par date de fin -->
+                                    <div class="col-md-2">
+                                        <label for="fin" class="form-label">Date fin</label>
+                                        <input type="date" id="fin" name="fin" class="form-control" th:value="${fin}">
+                                    </div>
+
+                                    <!-- Boutons d'action -->
+                                    <div class="col-12 mt-3">
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="bi bi-search"></i> Rechercher
+                                        </button>
+                                        <a th:href="@{/rendezvous}" class="btn btn-secondary ms-2">
+                                            <i class="bi bi-x-circle"></i> Réinitialiser
+                                        </a>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tableau des rendez-vous -->
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead class="table-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Date et Heure</th>
+                            <th>Patient</th>
+                            <th>Médecin</th>
+                            <th>Motif</th>
+                            <th>Durée</th>
+                            <th>Statut</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:if="${listRendezVous.isEmpty()}">
+                            <td colspan="8" class="text-center">Aucun rendez-vous trouvé</td>
+                        </tr>
+                        <tr th:each="rdv : ${listRendezVous}">
+                            <td th:text="${rdv.id}"></td>
+                            <td th:text="${#temporals.format(rdv.dateHeure, 'dd/MM/yyyy HH:mm')}"></td>
+                            <td>
+                                <a th:href="@{/patients/{id}(id=${rdv.patient.id})}" th:text="${rdv.patient.nom}">
+                                    Patient Name
+                                </a>
+                            </td>
+                            <td>
+                                <a th:href="@{/medecins/{id}(id=${rdv.medecin.id})}"
+                                   th:text="${rdv.medecin.prenom + ' ' + rdv.medecin.nom}">
+                                    Dr. John Doe
+                                </a>
+                            </td>
+                            <td th:text="${rdv.motif ?: '-'}"></td>
+                            <td th:text="${rdv.duree + ' min'}"></td>
+                            <td>
+                                    <span th:class="${'badge ' +
+                                                  (rdv.statut == T(org.mql.hospital.entities.RendezVous.StatutRendezVous).PLANIFIE ? 'bg-info' :
+                                                  (rdv.statut == T(org.mql.hospital.entities.RendezVous.StatutRendezVous).CONFIRME ? 'bg-success' :
+                                                  (rdv.statut == T(org.mql.hospital.entities.RendezVous.StatutRendezVous).ANNULE ? 'bg-danger' : 'bg-secondary')))}">
+                                        <span th:text="${rdv.statut}">PLANIFIE</span>
+                                    </span>
+                            </td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <!-- Bouton détails -->
+                                    <a th:href="@{/rendezvous/{id}(id=${rdv.id})}" class="btn btn-sm btn-info me-1"
+                                       title="Détails">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+
+                                    <!-- Bouton modifier -->
+                                    <a th:href="@{/rendezvous/edit/{id}(id=${rdv.id})}" class="btn btn-sm btn-warning me-1"
+                                       title="Modifier">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+
+                                    <!-- Bouton supprimer -->
+                                    <a onclick="javascript:return confirm('Êtes-vous sûr de vouloir supprimer ce rendez-vous?')"
+                                       th:href="@{/rendezvous/delete/{id}(id=${rdv.id})}"
+                                       class="btn btn-sm btn-danger" title="Supprimer">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <div th:if="${pages.length > 1}" class="d-flex justify-content-center mt-4">
+                    <ul class="pagination">
+                        <li th:each="i, item : ${pages}"
+                            th:class="${currentPage == item.index ? 'page-item active' : 'page-item'}">
+                            <a class="page-link"
+                               th:href="@{/rendezvous(page=${item.index}, medecinId=${medecinId}, patientId=${patientId}, statut=${statut}, debut=${debut}, fin=${fin})}"
+                               th:text="${1 + item.index}"></a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
