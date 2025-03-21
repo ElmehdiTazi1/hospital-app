@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="fr"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="template1.html">
+<head>
+    <meta charset="UTF-8">
+    <title>Prescriptions du Patient</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="container py-4">
+        <div class="card">
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <h3 class="mb-0">
+                    Prescriptions de <span th:text="${patient.nom}">Nom du patient</span>
+                </h3>
+                <div>
+                    <a th:href="@{/patients/{id}(id=${patient.id})}" class="btn btn-light me-2">
+                        <i class="bi bi-arrow-left"></i> Dossier patient
+                    </a>
+                    <a th:href="@{/prescriptions/nouvelle}" class="btn btn-success">
+                        <i class="bi bi-plus-circle"></i> Nouvelle prescription
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                <!-- Informations patient -->
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <h5 class="card-title">Informations patient</h5>
+                                <p class="card-text"><strong>Nom:</strong> <span th:text="${patient.nom}">Nom du patient</span></p>
+                                <p class="card-text" th:if="${patient.dateNaissance != null}">
+                                    <strong>Date de naissance:</strong>
+                                    <span th:text="${#dates.format(patient.dateNaissance, 'dd/MM/yyyy')}">01/01/1980</span>
+                                </p>
+                                <p class="card-text">
+                                    <strong>Statut:</strong>
+                                    <span th:if="${patient.malade}" class="badge bg-danger">Malade</span>
+                                    <span th:unless="${patient.malade}" class="badge bg-success">Non malade</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Statistiques -->
+                    <div class="col-md-8">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="card text-white bg-primary">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Total prescriptions</h5>
+                                        <p class="card-text display-4 text-center" th:text="${prescriptions.size()}">5</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card text-white bg-success">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Prescriptions actives</h5>
+                                        <p class="card-text display-4 text-center" th:text="${activePrescriptions.size()}">2</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card text-white bg-info">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Médicaments prescrits</h5>
+                                        <p class="card-text display-4 text-center">
+                                            <span th:text="${prescriptions.stream().flatMap(p -> p.lignePrescriptions.stream()).count()}">10</span>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Prescriptions actives -->
+                <div class="mb-4">
+                    <h4 class="mb-3"><i class="bi bi-check2-circle"></i> Prescriptions actives</h4>
+
+                    <div th:if="${activePrescriptions.isEmpty()}" class="alert alert-warning">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        Ce patient n'a actuellement aucune prescription active.
+                    </div>
+
+                    <div th:unless="${activePrescriptions.isEmpty()}" class="table-responsive">
+                        <table class="table table-hover table-striped">
+                            <thead class="table-success">
+                            <tr>
+                                <th>ID</th>
+                                <th>Date</th>
+                                <th>Médecin</th>
+                                <th>Médicaments</th>
+                                <th>Validité</th>
+                                <th>Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="prescription : ${activePrescriptions}">
+                                <td th:text="${prescription.id}"></td>
+                                <td th:text="${#dates.format(prescription.datePrescription, 'dd/MM/yyyy')}"></td>
+                                <td th:text="${prescription.medecin.prenom + ' ' + prescription.medecin.nom}"></td>
+                                <td>
+                                    <div th:if="${prescription.lignePrescriptions != null && !prescription.lignePrescriptions.isEmpty()}">
+                                            <span th:each="ligne, iterStat : ${prescription.lignePrescriptions}" class="badge bg-light text-dark me-1">
+                                                <span th:text="${ligne.medicament.nom}">Médicament</span>
+                                                <span th:if="${!iterStat.last}">,</span>
+                                            </span>
+                                    </div>
+                                    <span th:unless="${prescription.lignePrescriptions != null && !prescription.lignePrescriptions.isEmpty()}"
+                                          class="text-muted fst-italic">Aucun médicament</span>
+                                </td>
+                                <td th:text="${prescription.dureeValidite + ' jours'}"></td>
+                                <td>
+                                    <a th:href="@{/prescriptions/{id}(id=${prescription.id})}" class="btn btn-sm btn-primary">
+                                        <i class="bi bi-eye"></i> Voir
+                                    </a>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Historique des prescriptions -->
+                <div>
+                    <h4 class="mb-3"><i class="bi bi-clock-history"></i> Historique des prescriptions</h4>
+
+                    <div th:if="${prescriptions.isEmpty()}" class="alert alert-info">
+                        <i class="bi bi-info-circle-fill me-2"></i>
+                        Ce patient n'a aucune prescription dans son historique.
+                    </div>
+
+                    <div th:unless="${prescriptions.isEmpty()}" class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-light">
+                            <tr>
+                                <th>ID</th>
+                                <th>Date</th>
+                                <th>Médecin</th>
+                                <th>Statut</th>
+                                <th>Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="prescription : ${prescriptions}"
+                                th:class="${prescription.statut == T(org.mql.hospital.entities.Prescription.StatutPrescription).ACTIVE ? 'table-success' : ''}">
+                                <td th:text="${prescription.id}"></td>
+                                <td th:text="${#dates.format(prescription.datePrescription, 'dd/MM/yyyy')}"></td>
+                                <td>
+                                    <a th:href="@{/medecins/{id}(id=${prescription.medecin.id})}"
+                                       th:text="${prescription.medecin.prenom + ' ' + prescription.medecin.nom}">
+                                        Dr. John Doe
+                                    </a>
+                                </td>
+                                <td>
+                                        <span th:class="${'badge ' +
+                                              (prescription.statut == T(org.mql.hospital.entities.Prescription.StatutPrescription).ACTIVE ? 'bg-success' :
+                                              (prescription.statut == T(org.mql.hospital.entities.Prescription.StatutPrescription).TERMINEE ? 'bg-secondary' : 'bg-danger'))}">
+                                            <span th:text="${prescription.statut}">ACTIVE</span>
+                                        </span>
+                                </td>
+                                <td>
+                                    <a th:href="@{/prescriptions/{id}(id=${prescription.id})}" class="btn btn-sm btn-info">
+                                        <i class="bi bi-eye"></i> Détails
+                                    </a>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="fr"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="template1.html">
+<head>
+    <meta charset="UTF-8">
+    <title>Détails du Département</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="container py-4">
+        <div class="card">
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <h3 class="mb-0" th:text="${departement.nom}">Département</h3>
+                <div>
+                    <a th:href="@{/departements}" class="btn btn-light me-2">
+                        <i class="bi bi-arrow-left"></i> Retour à la liste
+                    </a>
+                    <a th:href="@{/departements/edit/{id}(id=${departement.id})}" class="btn btn-warning">
+                        <i class="bi bi-pencil"></i> Modifier
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <!-- Informations du département -->
+                    <div class="col-md-6">
+                        <h4 class="mb-3">Informations générales</h4>
+                        <div class="card mb-4">
+                            <div class="card-body">
+                                <div class="row mb-2">
+                                    <div class="col-md-4 fw-bold">ID:</div>
+                                    <div class="col-md-8" th:text="${departement.id}">1</div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-md-4 fw-bold">Nom:</div>
+                                    <div class="col-md-8" th:text="${departement.nom}">Cardiologie</div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-md-4 fw-bold">Localisation:</div>
+                                    <div class="col-md-8" th:text="${departement.localisation ?: 'Non renseignée'}">Bâtiment A, Étage 2</div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-md-4 fw-bold">Capacité:</div>
+                                    <div class="col-md-8" th:text="${departement.capaciteLits != null ? departement.capaciteLits + ' lits' : 'Non définie'}">30 lits</div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-md-4 fw-bold">Statut:</div>
+                                    <div class="col-md-8">
+                                        <span th:if="${departement.actif}" class="badge bg-success">Actif</span>
+                                        <span th:unless="${departement.actif}" class="badge bg-danger">Inactif</span>
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-md-4 fw-bold">Chef:</div>
+                                    <div class="col-md-8">
+                                        <span th:if="${departement.chefDepartement != null}"
+                                              th:text="${departement.chefDepartement.prenom + ' ' + departement.chefDepartement.nom}">
+                                            Dr. John Doe
+                                        </span>
+                                        <span th:unless="${departement.chefDepartement != null}" class="text-muted">
+                                            Non assigné
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Description -->
+                        <h4 class="mb-3">Description</h4>
+                        <div class="card mb-4">
+                            <div class="card-body">
+                                <p th:if="${departement.description != null && !departement.description.isEmpty()}"
+                                   th:text="${departement.description}">
+                                    Description du département...
+                                </p>
+                                <p th:unless="${departement.description != null && !departement.description.isEmpty()}"
+                                   class="text-muted fst-italic">
+                                    Aucune description disponible.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Actions supplémentaires -->
+                        <div class="card">
+                            <div class="card-header bg-secondary text-white">
+                                Actions
+                            </div>
+                            <div class="card-body">
+                                <!-- Changer le statut -->
+                                <form th:action="@{/departements/{id}/statut(id=${departement.id})}" method="post" class="mb-3">
+                                    <input type="hidden" name="actif" th:value="${!departement.actif}">
+                                    <button type="submit" class="btn w-100"
+                                            th:classappend="${departement.actif ? 'btn-danger' : 'btn-success'}">
+                                        <i class="bi" th:classappend="${departement.actif ? 'bi-toggle-off' : 'bi-toggle-on'}"></i>
+                                        <span th:text="${departement.actif ? 'Désactiver le département' : 'Activer le département'}">
+                                            Changer le statut
+                                        </span>
+                                    </button>
+                                </form>
+
+                                <!-- Assigner un chef de département -->
+                                <button type="button" class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#chefModal">
+                                    <i class="bi bi-person-badge"></i> Assigner un chef de département
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Liste des médecins du département -->
+                    <div class="col-md-6">
+                        <h4 class="mb-3">Médecins du département</h4>
+                        <div class="card">
+                            <div class="card-body">
+                                <div th:if="${medecins.isEmpty()}" class="alert alert-info">
+                                    Aucun médecin n'est actuellement affecté à ce département.
+                                </div>
+                                <div th:unless="${medecins.isEmpty()}" class="table-responsive">
+                                    <table class="table table-striped table-sm">
+                                        <thead>
+                                        <tr>
+                                            <th>Nom</th>
+                                            <th>Spécialité</th>
+                                            <th>Statut</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr th:each="medecin : ${medecins}">
+                                            <td>
+                                                <span th:text="${medecin.prenom + ' ' + medecin.nom}">Dr. John Doe</span>
+                                                <span th:if="${departement.chefDepartement != null && departement.chefDepartement.id == medecin.id}"
+                                                      class="badge bg-primary ms-1" title="Chef de département">
+                                                        Chef
+                                                    </span>
+                                            </td>
+                                            <td th:text="${medecin.specialite}">Cardiologie</td>
+                                            <td>
+                                                <span th:if="${medecin.disponible}" class="badge bg-success">Disponible</span>
+                                                <span th:unless="${medecin.disponible}" class="badge bg-danger">Indisponible</span>
+                                            </td>
+                                            <td>
+                                                <a th:href="@{/medecins/{id}(id=${medecin.id})}" class="btn btn-sm btn-info">
+                                                    <i class="bi bi-eye"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal pour assigner un chef de département -->
+    <div class="modal fade" id="chefModal" tabindex="-1" aria-labelledby="chefModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="chefModalLabel">Assigner un chef de département</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form th:action="@{/departements/{id}/chef(id=${departement.id})}" method="post">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="medecinId" class="form-label">Sélectionner un médecin</label>
+                            <select id="medecinId" name="medecinId" class="form-select" required>
+                                <option value="">-- Choisir un médecin --</option>
+                                <option th:each="medecin : ${medecins}"
+                                        th:value="${medecin.id}"
+                                        th:text="${medecin.prenom + ' ' + medecin.nom + ' (' + medecin.specialite + ')'}"
+                                        th:selected="${departement.chefDepartement != null && departement.chefDepartement.id == medecin.id}">
+                                    Dr. John Doe
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                        <button type="submit" class="btn btn-primary">Confirmer</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

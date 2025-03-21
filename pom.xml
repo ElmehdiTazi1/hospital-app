@@ -38,6 +38,7 @@
 		<spring-boot.version>3.2.4</spring-boot.version>
 		<bootstrap-icons.version>1.10.3</bootstrap-icons.version>
 		<maven-javadoc-plugin.version>3.5.0</maven-javadoc-plugin.version>
+		<boostrap.version>5.2.3</boostrap.version>
 	</properties>
 
 	<dependencyManagement>

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="fr"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="template1.html">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestion du Stock</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="container py-4">
+        <div class="row">
+            <div class="col-md-8 offset-md-2">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h3 class="mb-0">Gestion du Stock - <span th:text="${medicament.nom}">Médicament</span></h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-info">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <strong>Médicament:</strong> <span th:text="${medicament.nom}">Nom</span>
+                                </div>
+                                <div class="col-md-6">
+                                    <strong>Stock actuel:</strong> <span th:text="${medicament.quantiteStock}">100</span> unités
+                                </div>
+                            </div>
+                            <div class="row mt-1">
+                                <div class="col-md-6">
+                                    <strong>Seuil d'alerte:</strong> <span th:text="${medicament.seuilAlerte ?: 'Non défini'}">10</span>
+                                </div>
+                                <div class="col-md-6" th:if="${medicament.quantiteStock <= medicament.seuilAlerte}">
+                                    <div class="text-danger">
+                                        <i class="bi bi-exclamation-triangle-fill"></i> Stock sous le seuil d'alerte
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <form th:action="@{/medicaments/{id}/stock(id=${medicament.id})}" method="post" class="mt-4">
+                            <div class="mb-3">
+                                <label for="quantite" class="form-label">Modifier le stock</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">Quantité</span>
+                                    <input type="number" id="quantite" name="quantite" class="form-control" required>
+                                    <div class="input-group-text">
+                                        <div class="form-check form-check-inline mb-0">
+                                            <input class="form-check-input" type="radio" name="operationType" id="addition" value="addition" checked>
+                                            <label class="form-check-label" for="addition">Ajouter</label>
+                                        </div>
+                                        <div class="form-check form-check-inline mb-0">
+                                            <input class="form-check-input" type="radio" name="operationType" id="soustraction" value="soustraction">
+                                            <label class="form-check-label" for="soustraction">Retirer</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-text">
+                                    Utilisez des valeurs positives. Pour ajouter du stock, sélectionnez "Ajouter".
+                                    Pour retirer du stock, sélectionnez "Retirer".
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="raison" class="form-label">Raison du mouvement</label>
+                                <select class="form-select" id="raison" name="raison">
+                                    <option value="approvisionnement">Approvisionnement</option>
+                                    <option value="ajustement">Ajustement d'inventaire</option>
+                                    <option value="retour">Retour de produit</option>
+                                    <option value="perime">Produit périmé</option>
+                                    <option value="deteriore">Produit détérioré</option>
+                                    <option value="autre">Autre</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="commentaire" class="form-label">Commentaire (optionnel)</label>
+                                <textarea class="form-control" id="commentaire" name="commentaire" rows="3"></textarea>
+                            </div>
+
+                            <div class="d-flex justify-content-between mt-4">
+                                <a th:href="@{/medicaments/{id}(id=${medicament.id})}" class="btn btn-secondary">
+                                    <i class="bi bi-arrow-left"></i> Retour
+                                </a>
+                                <button type="submit" class="btn btn-success">
+                                    <i class="bi bi-check-circle"></i> Confirmer
+                                </button>
+                            </div>
+                        </form>
+
+                        <script>
+                            // Script pour ajuster automatiquement la valeur selon l'opération
+                            document.addEventListener('DOMContentLoaded', function() {
+                                const quantiteInput = document.getElementById('quantite');
+                                const addRadio = document.getElementById('addition');
+                                const subRadio = document.getElementById('soustraction');
+
+                                // Fonction pour traiter le changement d'opération
+                                function handleOperationChange() {
+                                    if (subRadio.checked) {
+                                        // Si on est en mode soustraction, s'assurer que la valeur est négative
+                                        if (quantiteInput.value > 0) {
+                                            quantiteInput.value = -Math.abs(quantiteInput.value);
+                                        }
+                                    } else {
+                                        // Si on est en mode addition, s'assurer que la valeur est positive
+                                        if (quantiteInput.value < 0) {
+                                            quantiteInput.value = Math.abs(quantiteInput.value);
+                                        }
+                                    }
+                                }
+
+                                // Écouter les changements
+                                addRadio.addEventListener('change', handleOperationChange);
+                                subRadio.addEventListener('change', handleOperationChange);
+
+                                // Exécuter au chargement
+                                handleOperationChange();
+                            });
+                        </script>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

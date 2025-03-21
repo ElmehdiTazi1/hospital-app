@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="fr"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="template1.html">
+<head>
+    <meta charset="UTF-8">
+    <title>Détails du Médecin</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="container py-4">
+        <div class="card">
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <h3 class="mb-0">Détails du Médecin</h3>
+                <div>
+                    <a th:href="@{/medecins}" class="btn btn-light me-2">
+                        <i class="bi bi-arrow-left"></i> Retour à la liste
+                    </a>
+                    <a th:href="@{/medecins/edit/{id}(id=${medecin.id})}" class="btn btn-warning">
+                        <i class="bi bi-pencil"></i> Modifier
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="row mb-3">
+                            <div class="col-md-4 fw-bold">ID:</div>
+                            <div class="col-md-8" th:text="${medecin.id}">1</div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-4 fw-bold">Matricule:</div>
+                            <div class="col-md-8" th:text="${medecin.matricule}">M12345</div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-4 fw-bold">Nom complet:</div>
+                            <div class="col-md-8" th:text="${medecin.prenom + ' ' + medecin.nom}">Dr. John Doe</div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-4 fw-bold">Spécialité:</div>
+                            <div class="col-md-8" th:text="${medecin.specialite}">Cardiologie</div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-4 fw-bold">Téléphone:</div>
+                            <div class="col-md-8" th:text="${medecin.telephone ?: 'Non renseigné'}">+212 5XX-XXXXXX</div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-4 fw-bold">Email:</div>
+                            <div class="col-md-8" th:text="${medecin.email ?: 'Non renseigné'}">email@example.com</div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-4 fw-bold">Département:</div>
+                            <div class="col-md-8" th:text="${medecin.departement != null ? medecin.departement.nom : 'Non assigné'}">Cardiologie</div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-4 fw-bold">Statut:</div>
+                            <div class="col-md-8">
+                                <span th:if="${medecin.disponible}" class="badge bg-success">Disponible</span>
+                                <span th:unless="${medecin.disponible}" class="badge bg-danger">Indisponible</span>
+                            </div>
+                        </div>
+
+                        <!-- Chef de département -->
+                        <div class="row mb-3" th:if="${medecin.departement != null && medecin.departement.chefDepartement != null && medecin.departement.chefDepartement.id == medecin.id}">
+                            <div class="col-md-4 fw-bold">Statut spécial:</div>
+                            <div class="col-md-8">
+                                <span class="badge bg-primary">Chef du département de
+                                    <span th:text="${medecin.departement.nom}">Cardiologie</span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Actions supplémentaires -->
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header bg-secondary text-white">
+                                Actions
+                            </div>
+                            <div class="card-body">
+                                <!-- Changer la disponibilité -->
+                                <form th:action="@{/medecins/{id}/disponibilite(id=${medecin.id})}" method="post" class="mb-3">
+                                    <input type="hidden" name="disponible" th:value="${!medecin.disponible}">
+                                    <button type="submit" class="btn w-100"
+                                            th:classappend="${medecin.disponible ? 'btn-danger' : 'btn-success'}">
+                                        <i class="bi" th:classappend="${medecin.disponible ? 'bi-toggle-off' : 'bi-toggle-on'}"></i>
+                                        <span th:text="${medecin.disponible ? 'Marquer comme indisponible' : 'Marquer comme disponible'}">
+                                            Changer disponibilité
+                                        </span>
+                                    </button>
+                                </form>
+
+                                <!-- Assigner comme chef de département si ce n'est pas déjà le cas -->
+                                <div th:if="${medecin.departement != null && (medecin.departement.chefDepartement == null || medecin.departement.chefDepartement.id != medecin.id)}">
+                                    <form th:action="@{/medecins/{id}/chef-departement(id=${medecin.id})}" method="post">
+                                        <input type="hidden" name="departementId" th:value="${medecin.departement.id}">
+                                        <button type="submit" class="btn btn-primary w-100">
+                                            <i class="bi bi-award"></i> Nommer chef de département
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Rendez-vous du médecin (lien vers une future page) -->
+                        <div class="card mt-3">
+                            <div class="card-header bg-info text-white">
+                                Rendez-vous
+                            </div>
+                            <div class="card-body">
+                                <a href="#" class="btn btn-outline-info w-100">
+                                    <i class="bi bi-calendar-check"></i> Voir les rendez-vous
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

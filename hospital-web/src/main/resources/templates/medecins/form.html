@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="fr"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="template1.html">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${title}">Formulaire Médecin</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="container py-4">
+        <div class="row">
+            <div class="col-md-8 offset-md-2">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h3 class="mb-0" th:text="${title}">Formulaire Médecin</h3>
+                    </div>
+                    <div class="card-body">
+                        <form th:action="@{/medecins/save}" method="post" th:object="${medecin}">
+                            <!-- ID caché pour l'édition -->
+                            <input type="hidden" th:field="*{id}">
+
+                            <div class="row mb-3">
+                                <!-- Matricule -->
+                                <div class="col-md-6">
+                                    <label for="matricule" class="form-label">Matricule*</label>
+                                    <input type="text" th:field="*{matricule}" class="form-control" id="matricule" required>
+                                    <div class="text-danger" th:if="${#fields.hasErrors('matricule')}" th:errors="*{matricule}"></div>
+                                </div>
+
+                                <!-- Spécialité -->
+                                <div class="col-md-6">
+                                    <label for="specialite" class="form-label">Spécialité*</label>
+                                    <input type="text" th:field="*{specialite}" class="form-control" id="specialite" required>
+                                    <div class="text-danger" th:if="${#fields.hasErrors('specialite')}" th:errors="*{specialite}"></div>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <!-- Nom -->
+                                <div class="col-md-6">
+                                    <label for="nom" class="form-label">Nom*</label>
+                                    <input type="text" th:field="*{nom}" class="form-control" id="nom" required>
+                                    <div class="text-danger" th:if="${#fields.hasErrors('nom')}" th:errors="*{nom}"></div>
+                                </div>
+
+                                <!-- Prénom -->
+                                <div class="col-md-6">
+                                    <label for="prenom" class="form-label">Prénom*</label>
+                                    <input type="text" th:field="*{prenom}" class="form-control" id="prenom" required>
+                                    <div class="text-danger" th:if="${#fields.hasErrors('prenom')}" th:errors="*{prenom}"></div>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <!-- Téléphone -->
+                                <div class="col-md-6">
+                                    <label for="telephone" class="form-label">Téléphone</label>
+                                    <input type="tel" th:field="*{telephone}" class="form-control" id="telephone">
+                                    <div class="text-danger" th:if="${#fields.hasErrors('telephone')}" th:errors="*{telephone}"></div>
+                                </div>
+
+                                <!-- Email -->
+                                <div class="col-md-6">
+                                    <label for="email" class="form-label">Email</label>
+                                    <input type="email" th:field="*{email}" class="form-control" id="email">
+                                    <div class="text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <!-- Département -->
+                                <div class="col-md-6">
+                                    <label for="departementId" class="form-label">Département</label>
+                                    <select id="departementId" name="departementId" class="form-select">
+                                        <option value="">-- Sélectionner un département --</option>
+                                        <option th:each="departement : ${departements}"
+                                                th:value="${departement.id}"
+                                                th:text="${departement.nom}"
+                                                th:selected="${medecin.departement != null && medecin.departement.id == departement.id}">
+                                            Département
+                                        </option>
+                                    </select>
+                                </div>
+
+                                <!-- Disponibilité -->
+                                <div class="col-md-6">
+                                    <div class="form-check mt-4">
+                                        <input class="form-check-input" type="checkbox" th:field="*{disponible}" id="disponible">
+                                        <label class="form-check-label" for="disponible">
+                                            Disponible
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-between mt-4">
+                                <a th:href="@{/medecins}" class="btn btn-secondary">
+                                    <i class="bi bi-arrow-left"></i> Retour
+                                </a>
+                                <button type="submit" class="btn btn-success">
+                                    <i class="bi bi-check-circle"></i> Enregistrer
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

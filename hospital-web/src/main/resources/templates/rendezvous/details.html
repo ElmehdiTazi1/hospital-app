@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="fr"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="template1.html">
+<head>
+    <meta charset="UTF-8">
+    <title>Détails du Rendez-vous</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="container py-4">
+        <div class="card">
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <h3 class="mb-0">Détails du Rendez-vous</h3>
+                <div>
+                    <a th:href="@{/rendezvous}" class="btn btn-light me-2">
+                        <i class="bi bi-arrow-left"></i> Retour à la liste
+                    </a>
+                    <a th:href="@{/rendezvous/edit/{id}(id=${rendezVous.id})}" class="btn btn-warning">
+                        <i class="bi bi-pencil"></i> Modifier
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <!-- Informations du rendez-vous -->
+                    <div class="col-md-6">
+                        <h4 class="mb-3">Informations générales</h4>
+                        <div class="card mb-4">
+                            <div class="card-body">
+                                <div class="row mb-2">
+                                    <div class="col-md-4 fw-bold">ID:</div>
+                                    <div class="col-md-8" th:text="${rendezVous.id}">1</div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-md-4 fw-bold">Date & Heure:</div>
+                                    <div class="col-md-8" th:text="${#temporals.format(rendezVous.dateHeure, 'dd/MM/yyyy HH:mm')}">
+                                        01/01/2025 14:30
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-md-4 fw-bold">Durée:</div>
+                                    <div class="col-md-8" th:text="${rendezVous.duree + ' minutes'}">30 minutes</div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-md-4 fw-bold">Motif:</div>
+                                    <div class="col-md-8" th:text="${rendezVous.motif ?: 'Non spécifié'}">Consultation</div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-md-4 fw-bold">Statut:</div>
+                                    <div class="col-md-8">
+                                        <span th:class="${'badge ' +
+                                                  (rendezVous.statut == T(org.mql.hospital.entities.RendezVous.StatutRendezVous).PLANIFIE ? 'bg-info' :
+                                                  (rendezVous.statut == T(org.mql.hospital.entities.RendezVous.StatutRendezVous).CONFIRME ? 'bg-success' :
+                                                  (rendezVous.statut == T(org.mql.hospital.entities.RendezVous.StatutRendezVous).ANNULE ? 'bg-danger' : 'bg-secondary')))}">
+                                            <span th:text="${rendezVous.statut}">PLANIFIE</span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Notes -->
+                        <h4 class="mb-3">Notes</h4>
+                        <div class="card mb-4">
+                            <div class="card-body">
+                                <p th:if="${rendezVous.notes != null && !rendezVous.notes.isEmpty()}"
+                                   th:text="${rendezVous.notes}">
+                                    Notes sur le rendez-vous...
+                                </p>
+                                <p th:unless="${rendezVous.notes != null && !rendezVous.notes.isEmpty()}"
+                                   class="text-muted fst-italic">
+                                    Aucune note disponible.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Actions supplémentaires -->
+                        <div class="card">
+                            <div class="card-header bg-secondary text-white">
+                                Actions
+                            </div>
+                            <div class="card-body">
+                                <!-- Changer le statut -->
+                                <form th:action="@{/rendezvous/{id}/statut(id=${rendezVous.id})}" method="post" class="mb-3">
+                                    <div class="input-group">
+                                        <select name="statut" class="form-select">
+                                            <option th:each="s : ${statuts}"
+                                                    th:value="${s}"
+                                                    th:text="${s}"
+                                                    th:selected="${rendezVous.statut == s}">
+                                                PLANIFIE
+                                            </option>
+                                        </select>
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="bi bi-check"></i> Mettre à jour
+                                        </button>
+                                    </div>
+                                </form>
+
+                                <!-- Supprimer -->
+                                <a onclick="javascript:return confirm('Êtes-vous sûr de vouloir supprimer ce rendez-vous?')"
+                                   th:href="@{/rendezvous/delete/{id}(id=${rendezVous.id})}"
+                                   class="btn btn-danger w-100">
+                                    <i class="bi bi-trash"></i> Supprimer le rendez-vous
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Informations Patient et Médecin -->
+                    <div class="col-md-6">
+                        <!-- Informations du patient -->
+                        <h4 class="mb-3">Patient</h4>
+                        <div class="card mb-4">
+                            <div class="card-body">
+                                <div class="row mb-2">
+                                    <div class="col-md-4 fw-bold">ID:</div>
+                                    <div class="col-md-8" th:text="${rendezVous.patient.id}">1</div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-md-4 fw-bold">Nom:</div>
+                                    <div class="col-md-8" th:text="${rendezVous.patient.nom}">Patient Name</div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-md-4 fw-bold">Date de naissance:</div>
+                                    <div class="col-md-8" th:text="${#dates.format(rendezVous.patient.dateNaissance, 'dd/MM/yyyy')}">01/01/1980</div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-md-4 fw-bold">Statut santé:</div>
+                                    <div class="col-md-8">
+                                        <span th:if="${rendezVous.patient.malade}" class="badge bg-danger">Malade</span>
+                                        <span th:unless="${rendezVous.patient.malade}" class="badge bg-success">Non malade</span>
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-md-4 fw-bold">Score:</div>
+                                    <div class="col-md-8" th:text="${rendezVous.patient.score}">150</div>
+                                </div>
+                                <div class="mt-3">
+                                    <a th:href="@{/patients/{id}(id=${rendezVous.patient.id})}" class="btn btn-sm btn-info">
+                                        <i class="bi bi-eye"></i> Voir le dossier patient
+                                    </a>
+                                    <a th:href="@{/rendezvous/patient/{id}(id=${rendezVous.patient.id})}" class="btn btn-sm btn-secondary ms-2">
+                                        <i class="bi bi-calendar"></i> Tous les rendez-vous
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Informations du médecin -->
+                        <h4 class="mb-3">Médecin</h4>
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row mb-2">
+                                    <div class="col-md-4 fw-bold">ID:</div>
+                                    <div class="col-md-8" th:text="${rendezVous.medecin.id}">1</div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-md-4 fw-bold">Nom:</div>
+                                    <div class="col-md-8" th:text="${rendezVous.medecin.prenom + ' ' + rendezVous.medecin.nom}">Dr. John Doe</div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-md-4 fw-bold">Spécialité:</div>
+                                    <div class="col-md-8" th:text="${rendezVous.medecin.specialite}">Cardiologie</div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-md-4 fw-bold">Département:</div>
+                                    <div class="col-md-8" th:text="${rendezVous.medecin.departement != null ? rendezVous.medecin.departement.nom : 'Non assigné'}">
+                                        Cardiologie
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-md-4 fw-bold">Disponibilité:</div>
+                                    <div class="col-md-8">
+                                        <span th:if="${rendezVous.medecin.disponible}" class="badge bg-success">Disponible</span>
+                                        <span th:unless="${rendezVous.medecin.disponible}" class="badge bg-danger">Indisponible</span>
+                                    </div>
+                                </div>
+                                <div class="mt-3">
+                                    <a th:href="@{/medecins/{id}(id=${rendezVous.medecin.id})}" class="btn btn-sm btn-info">
+                                        <i class="bi bi-eye"></i> Voir la fiche médecin
+                                    </a>
+                                    <a th:href="@{/rendezvous/medecin/{id}(id=${rendezVous.medecin.id})}" class="btn btn-sm btn-secondary ms-2">
+                                        <i class="bi bi-calendar"></i> Planning
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

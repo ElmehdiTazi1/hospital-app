@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="fr"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="template1.html">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${title}">Formulaire Rendez-vous</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="container py-4">
+        <div class="row">
+            <div class="col-lg-8 offset-lg-2">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h3 class="mb-0" th:text="${title}">Formulaire Rendez-vous</h3>
+                    </div>
+                    <div class="card-body">
+                        <form th:action="@{/rendezvous/save}" method="post" th:object="${rendezVous}">
+                            <!-- ID caché pour l'édition -->
+                            <input type="hidden" th:field="${id}">
+
+                            <!-- Date et heure du rendez-vous -->
+                            <div class="mb-3">
+                                <label for="dateHeure" class="form-label">Date et heure du rendez-vous*</label>
+                                <input type="datetime-local" th:field="${dateHeure}" class="form-control" id="dateHeure" required>
+                                <div class="text-danger" th:if="${#fields.hasErrors('dateHeure')}" th:errors="${dateHeure}"></div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <!-- Patient -->
+                                <div class="col-md-6">
+                                    <label for="patientId" class="form-label">Patient*</label>
+                                    <select id="patientId" name="patientId" class="form-select" required>
+                                        <option value="">-- Sélectionner un patient --</option>
+                                        <option th:each="patient : ${patients}"
+                                                th:value="${patient.id}"
+                                                th:text="${patient.nom}"
+                                                th:selected="${rendezVous.patient != null && rendezVous.patient.id == patient.id}">
+                                            Patient Name
+                                        </option>
+                                    </select>
+                                </div>
+
+                                <!-- Médecin -->
+                                <div class="col-md-6">
+                                    <label for="medecinId" class="form-label">Médecin*</label>
+                                    <select id="medecinId" name="medecinId" class="form-select" required>
+                                        <option value="">-- Sélectionner un médecin --</option>
+                                        <option th:each="medecin : ${medecins}"
+                                                th:value="${medecin.id}"
+                                                th:text="${medecin.prenom + ' ' + medecin.nom + ' (' + medecin.specialite + ')'}"
+                                                th:selected="${rendezVous.medecin != null && rendezVous.medecin.id == medecin.id}">
+                                            Dr. John Doe (Cardiologie)
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <!-- Durée -->
+                                <div class="col-md-6">
+                                    <label for="duree" class="form-label">Durée (minutes)*</label>
+                                    <input type="number" th:field="${duree}" class="form-control" id="duree" min="10" max="180" step="5" required>
+                                    <div class="text-danger" th:if="${#fields.hasErrors('duree')}" th:errors="${duree}"></div>
+                                </div>
+
+                                <!-- Statut -->
+                                <div class="col-md-6">
+                                    <label for="statut" class="form-label">Statut*</label>
+                                    <select id="statut" th:field="${statut}" class="form-select" required>
+                                        <option th:each="s : ${statuts}"
+                                                th:value="${s}"
+                                                th:text="${s}">
+                                            PLANIFIE
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Motif -->
+                            <div class="mb-3">
+                                <label for="motif" class="form-label">Motif du rendez-vous</label>
+                                <input type="text" th:field="${motif}" class="form-control" id="motif">
+                            </div>
+
+                            <!-- Notes -->
+                            <div class="mb-3">
+                                <label for="notes" class="form-label">Notes</label>
+                                <textarea th:field="${notes}" class="form-control" id="notes" rows="3"></textarea>
+                            </div>
+
+                            <div class="d-flex justify-content-between mt-4">
+                                <a th:href="@{/rendezvous}" class="btn btn-secondary">
+                                    <i class="bi bi-arrow-left"></i> Retour
+                                </a>
+                                <button type="submit" class="btn btn-success">
+                                    <i class="bi bi-check-circle"></i> Enregistrer
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

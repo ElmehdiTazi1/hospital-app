@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="fr"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="template1.html">
+<head>
+    <meta charset="UTF-8">
+    <title>Détails du Médicament</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="container py-4">
+        <!-- Messages d'alerte -->
+        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i>
+            <span th:text="${successMessage}">Opération réussie</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            <span th:text="${errorMessage}">Erreur</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <div class="card">
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <h3 class="mb-0" th:text="${medicament.nom}">Nom du médicament</h3>
+                <div>
+                    <a th:href="@{/medicaments}" class="btn btn-light me-2">
+                        <i class="bi bi-arrow-left"></i> Retour à la liste
+                    </a>
+                    <a th:href="@{/medicaments/edit/{id}(id=${medicament.id})}" class="btn btn-warning">
+                        <i class="bi bi-pencil"></i> Modifier
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <!-- Informations générales -->
+                    <div class="col-md-8">
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h4 class="mb-0">Informations générales</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="row mb-2">
+                                    <div class="col-md-4 fw-bold">ID:</div>
+                                    <div class="col-md-8" th:text="${medicament.id}">1</div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-md-4 fw-bold">Nom:</div>
+                                    <div class="col-md-8" th:text="${medicament.nom}">Paracétamol</div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-md-4 fw-bold">DCI:</div>
+                                    <div class="col-md-8" th:text="${medicament.dci}">Paracétamol</div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-md-4 fw-bold">Laboratoire:</div>
+                                    <div class="col-md-8" th:text="${medicament.laboratoire ?: 'Non spécifié'}">Sanofi</div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-md-4 fw-bold">Dosage:</div>
+                                    <div class="col-md-8" th:text="${medicament.dosage ?: 'Non spécifié'}">500mg</div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-md-4 fw-bold">Forme:</div>
+                                    <div class="col-md-8" th:text="${medicament.forme ?: 'Non spécifiée'}">Comprimé</div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-md-4 fw-bold">Prix unitaire:</div>
+                                    <div class="col-md-8" th:text="${#numbers.formatDecimal(medicament.prix, 1, 2) + ' €'}">2.50 €</div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-md-4 fw-bold">Statut:</div>
+                                    <div class="col-md-8">
+                                        <span th:if="${medicament.disponible}" class="badge bg-success">Disponible</span>
+                                        <span th:unless="${medicament.disponible}" class="badge bg-danger">Indisponible</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Contre-indications -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h4 class="mb-0">Contre-indications et précautions</h4>
+                            </div>
+                            <div class="card-body">
+                                <p th:if="${medicament.contreIndications != null && !medicament.contreIndications.isEmpty()}"
+                                   th:text="${medicament.contreIndications}">
+                                    Informations sur les contre-indications et précautions d'usage...
+                                </p>
+                                <p th:unless="${medicament.contreIndications != null && !medicament.contreIndications.isEmpty()}"
+                                   class="text-muted fst-italic">
+                                    Aucune information disponible.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Stock et actions -->
+                    <div class="col-md-4">
+                        <!-- Informations de stock -->
+                        <div class="card mb-4">
+                            <div class="card-header bg-info text-white">
+                                <h4 class="mb-0">Stock</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="text-center mb-3">
+                                    <div style="width: 120px; height: 120px" class="border rounded-circle d-flex align-items-center justify-content-center mx-auto">
+                                        <h2 class="display-4" th:text="${medicament.quantiteStock}">100</h2>
+                                    </div>
+                                    <p class="text-muted mt-2">Unités en stock</p>
+                                </div>
+
+                                <div class="alert alert-warning" th:if="${medicament.quantiteStock <= medicament.seuilAlerte}">
+                                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                    Stock sous le seuil d'alerte (<span th:text="${medicament.seuilAlerte}">10</span> unités)
+                                </div>
+
+                                <div class="alert alert-danger" th:if="${medicament.quantiteStock == 0}">
+                                    <i class="bi bi-x-circle-fill me-2"></i>
+                                    Stock épuisé
+                                </div>
+
+                                <div class="row mb-2">
+                                    <div class="col-6 fw-bold">Seuil d'alerte:</div>
+                                    <div class="col-6" th:text="${medicament.seuilAlerte ?: 'Non défini'}">10</div>
+                                </div>
+
+                                <div class="row mb-2" th:if="${medicament.dateExpiration != null}">
+                                    <div class="col-6 fw-bold">Date d'expiration:</div>
+                                    <div class="col-6" th:text="${#dates.format(medicament.dateExpiration, 'dd/MM/yyyy')}">
+                                        01/01/2026
+                                    </div>
+                                </div>
+
+                                <div class="alert alert-danger" th:if="${medicament.dateExpiration != null && medicament.isExpired()}">
+                                    <i class="bi bi-calendar-x-fill me-2"></i>
+                                    Produit expiré
+                                </div>
+
+                                <a th:href="@{/medicaments/{id}/stock(id=${medicament.id})}" class="btn btn-primary w-100 mt-3">
+                                    <i class="bi bi-box-seam"></i> Gérer le stock
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Actions supplémentaires -->
+                        <div class="card">
+                            <div class="card-header bg-secondary text-white">
+                                <h4 class="mb-0">Actions</h4>
+                            </div>
+                            <div class="card-body">
+                                <!-- Changer la disponibilité -->
+                                <form th:action="@{/medicaments/{id}/disponibilite(id=${medicament.id})}" method="post" class="mb-3">
+                                    <input type="hidden" name="disponible" th:value="${!medicament.disponible}">
+                                    <button type="submit" class="btn w-100"
+                                            th:classappend="${medicament.disponible ? 'btn-danger' : 'btn-success'}"
+                                            th:disabled="${!medicament.disponible && medicament.quantiteStock == 0}">
+                                        <i class="bi" th:classappend="${medicament.disponible ? 'bi-toggle-off' : 'bi-toggle-on'}"></i>
+                                        <span th:text="${medicament.disponible ? 'Marquer comme indisponible' : 'Marquer comme disponible'}">
+                                            Changer disponibilité
+                                        </span>
+                                    </button>
+                                </form>
+
+                                <!-- Supprimer -->
+                                <a onclick="javascript:return confirm('Êtes-vous sûr de vouloir supprimer ce médicament?')"
+                                   th:href="@{/medicaments/delete/{id}(id=${medicament.id})}"
+                                   class="btn btn-danger w-100">
+                                    <i class="bi bi-trash"></i> Supprimer
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

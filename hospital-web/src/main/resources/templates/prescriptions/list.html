@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="fr"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="template1.html">
+<head>
+    <meta charset="UTF-8">
+    <title>Liste des Prescriptions</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="container-fluid py-4">
+        <div class="card">
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <h3 class="mb-0">Liste des Prescriptions</h3>
+                <a th:href="@{/prescriptions/nouvelle}" class="btn btn-light">
+                    <i class="bi bi-plus-circle"></i> Nouvelle Prescription
+                </a>
+            </div>
+            <div class="card-body">
+                <!-- Filtres avancés -->
+                <div class="card mb-4">
+                    <div class="card-header bg-light">
+                        <a class="btn btn-sm btn-link text-decoration-none" data-bs-toggle="collapse" href="#filtresCollapse">
+                            <i class="bi bi-funnel"></i> Filtres avancés
+                        </a>
+                    </div>
+                    <div class="collapse" id="filtresCollapse">
+                        <div class="card-body">
+                            <form method="get" th:action="@{/prescriptions}">
+                                <div class="row g-3">
+                                    <!-- Filtre par patient -->
+                                    <div class="col-md-3">
+                                        <label for="patientId" class="form-label">Patient</label>
+                                        <select id="patientId" name="patientId" class="form-select">
+                                            <option value="">Tous les patients</option>
+                                            <option th:each="patient : ${patients}"
+                                                    th:value="${patient.id}"
+                                                    th:text="${patient.nom}"
+                                                    th:selected="${patientId != null && patientId == patient.id}">
+                                                Nom du patient
+                                            </option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Filtre par médecin -->
+                                    <div class="col-md-3">
+                                        <label for="medecinId" class="form-label">Médecin</label>
+                                        <select id="medecinId" name="medecinId" class="form-select">
+                                            <option value="">Tous les médecins</option>
+                                            <option th:each="medecin : ${medecins}"
+                                                    th:value="${medecin.id}"
+                                                    th:text="${medecin.prenom + ' ' + medecin.nom}"
+                                                    th:selected="${medecinId != null && medecinId == medecin.id}">
+                                                Dr. John Doe
+                                            </option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Filtre par statut -->
+                                    <div class="col-md-2">
+                                        <label for="statut" class="form-label">Statut</label>
+                                        <select id="statut" name="statut" class="form-select">
+                                            <option value="">Tous les statuts</option>
+                                            <option th:each="s : ${statuts}"
+                                                    th:value="${s}"
+                                                    th:text="${s}"
+                                                    th:selected="${statut != null && statut == s}">
+                                                ACTIVE
+                                            </option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Filtre par date de début -->
+                                    <div class="col-md-2">
+                                        <label for="dateDebut" class="form-label">Date début</label>
+                                        <input type="date" id="dateDebut" name="dateDebut" class="form-control"
+                                               th:value="${dateDebut != null ? #dates.format(dateDebut, 'yyyy-MM-dd') : ''}">
+                                    </div>
+
+                                    <!-- Filtre par date de fin -->
+                                    <div class="col-md-2">
+                                        <label for="dateFin" class="form-label">Date fin</label>
+                                        <input type="date" id="dateFin" name="dateFin" class="form-control"
+                                               th:value="${dateFin != null ? #dates.format(dateFin, 'yyyy-MM-dd') : ''}">
+                                    </div>
+
+                                    <!-- Boutons d'action -->
+                                    <div class="col-12 mt-3">
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="bi bi-search"></i> Rechercher
+                                        </button>
+                                        <a th:href="@{/prescriptions}" class="btn btn-secondary ms-2">
+                                            <i class="bi bi-x-circle"></i> Réinitialiser
+                                        </a>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tableau des prescriptions -->
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead class="table-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Date</th>
+                            <th>Patient</th>
+                            <th>Médecin</th>
+                            <th>Médicaments</th>
+                            <th>Durée</th>
+                            <th>Statut</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:if="${listPrescriptions.isEmpty()}">
+                            <td colspan="8" class="text-center">Aucune prescription trouvée</td>
+                        </tr>
+                        <tr th:each="prescription : ${listPrescriptions}">
+                            <td th:text="${prescription.id}"></td>
+                            <td th:text="${#dates.format(prescription.datePrescription, 'dd/MM/yyyy')}"></td>
+                            <td>
+                                <a th:href="@{/patients/{id}(id=${prescription.patient.id})}" th:text="${prescription.patient.nom}">
+                                    Nom du patient
+                                </a>
+                            </td>
+                            <td>
+                                <a th:href="@{/medecins/{id}(id=${prescription.medecin.id})}"
+                                   th:text="${prescription.medecin.prenom + ' ' + prescription.medecin.nom}">
+                                    Dr. John Doe
+                                </a>
+                            </td>
+                            <td>
+                                    <span class="badge bg-info"
+                                          th:text="${prescription.lignePrescriptions != null ? prescription.lignePrescriptions.size() : 0}">
+                                        3
+                                    </span> médicaments
+                            </td>
+                            <td th:text="${prescription.dureeValidite + ' jours'}">30 jours</td>
+                            <td>
+                                    <span th:class="${'badge ' +
+                                              (prescription.statut == T(org.mql.hospital.entities.Prescription.StatutPrescription).ACTIVE ? 'bg-success' :
+                                              (prescription.statut == T(org.mql.hospital.entities.Prescription.StatutPrescription).TERMINEE ? 'bg-secondary' : 'bg-danger'))}">
+                                        <span th:text="${prescription.statut}">ACTIVE</span>
+                                    </span>
+                            </td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <!-- Bouton détails -->
+                                    <a th:href="@{/prescriptions/{id}(id=${prescription.id})}" class="btn btn-sm btn-info me-1"
+                                       title="Détails">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+
+                                    <!-- Bouton modifier (seulement si active) -->
+                                    <a th:if="${prescription.statut == T(org.mql.hospital.entities.Prescription.StatutPrescription).ACTIVE}"
+                                       th:href="@{/prescriptions/edit/{id}(id=${prescription.id})}"
+                                       class="btn btn-sm btn-warning me-1" title="Modifier">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+
+                                    <!-- Bouton supprimer -->
+                                    <a onclick="javascript:return confirm('Êtes-vous sûr de vouloir supprimer cette prescription?')"
+                                       th:href="@{/prescriptions/delete/{id}(id=${prescription.id})}"
+                                       class="btn btn-sm btn-danger" title="Supprimer">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <div th:if="${pages.length > 1}" class="d-flex justify-content-center mt-4">
+                    <ul class="pagination">
+                        <li th:each="i, item : ${pages}"
+                            th:class="${currentPage == item.index ? 'page-item active' : 'page-item'}">
+                            <a class="page-link"
+                               th:href="@{/prescriptions(page=${item.index}, patientId=${patientId}, medecinId=${medecinId}, statut=${statut}, dateDebut=${dateDebut}, dateFin=${dateFin})}"
+                               th:text="${1 + item.index}"></a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
