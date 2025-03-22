@@ -65,7 +65,7 @@ public class PatientController {
         model.addAttribute("pages", new int[pagePatients.getTotalPages()]);
         model.addAttribute("currentPage", p);
         model.addAttribute("keyword", kw);
-        return "patients";
+        return "patients/list";
     }
 
     /**
@@ -95,7 +95,7 @@ public class PatientController {
     public String formPatient(Model model){
         model.addAttribute("patient", new Patient());
         model.addAttribute("title", "Ajouter le patient");
-        return "formPatients";
+        return "patients/form";
     }
 
     /**
@@ -108,7 +108,7 @@ public class PatientController {
     @PostMapping("/savePatient")
     public String savePatient(@Valid Patient patient, BindingResult bindingResult){
         if(bindingResult.hasErrors()){
-            return "formPatients";
+           return "patients/form";
         }
         patientService.savePatient(patient);
         return "redirect:/index?keyword=" + patient.getNom();
@@ -128,6 +128,6 @@ public class PatientController {
         model.addAttribute("patient", patient);
         model.addAttribute("title", "Modifier le patient");
 
-        return "formPatients";
+        return "patients/form";
     }
 }

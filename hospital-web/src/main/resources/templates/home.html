@@ -5,148 +5,260 @@
       layout:decorate="template1.html">
 <head>
     <meta charset="UTF-8">
-    <title>Accueil - Gestion Hospitalière</title>
+    <title>Accueil - MediSys</title>
     <style>
-        .feature-card {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            border: none;
-            border-radius: 0.5rem;
+        .hero-section {
+            background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
+            color: white;
+            border-radius: 1rem;
             overflow: hidden;
+            position: relative;
         }
-        .feature-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 300px;
+            height: 100%;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"><rect width="200" height="200" fill="none"/><path d="M168.7,50.8C159.3,41.5,143.5,41.5,134.1,50.8L68.3,116.6C58.9,125.9,58.9,141.7,68.3,151L134.1,216.8C143.5,226.1,159.3,226.1,168.7,216.8L234.5,151C243.9,141.7,243.9,125.9,234.5,116.6L168.7,50.8Z" fill="rgba(255,255,255,0.08)"/><path d="M134.1,50.8C124.7,41.5,108.9,41.5,99.5,50.8L33.7,116.6C24.4,125.9,24.4,141.7,33.7,151L99.5,216.8C108.9,226.1,124.7,226.1,134.1,216.8L199.9,151C209.3,141.7,209.3,125.9,199.9,116.6L134.1,50.8Z" fill="rgba(255,255,255,0.08)"/></svg>');
+            background-repeat: no-repeat;
+            background-position: right center;
+            opacity: 0.6;
+            z-index: 0;
         }
-        .card-icon {
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .stats-card {
+            transition: all 0.3s ease;
+            transform: translateY(0);
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            height: 100%;
+        }
+
+        .stats-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+        }
+
+        .stats-icon {
             font-size: 3rem;
-            margin-bottom: 1rem;
+            margin-bottom: 0.75rem;
+            opacity: 0.9;
         }
-        .stats-counter {
+
+        .stats-number {
             font-size: 2.5rem;
-            font-weight: bold;
+            font-weight: 600;
+            margin-bottom: 0;
+            line-height: 1;
         }
+
+        .stats-label {
+            font-size: 1.1rem;
+            margin-top: 0.5rem;
+            opacity: 0.9;
+        }
+
+        .feature-card {
+            border-radius: 1rem;
+            overflow: hidden;
+            height: 100%;
+            transition: all 0.3s ease;
+            transform: translateY(0);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+        }
+
         .gradient-primary {
             background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
         }
+
         .gradient-success {
             background: linear-gradient(135deg, #198754 0%, #146c43 100%);
         }
+
         .gradient-danger {
             background: linear-gradient(135deg, #dc3545 0%, #b02a37 100%);
         }
+
         .gradient-info {
             background: linear-gradient(135deg, #0dcaf0 0%, #0aa2c0 100%);
         }
+
         .gradient-warning {
             background: linear-gradient(135deg, #ffc107 0%, #cc9a06 100%);
         }
+
         .gradient-secondary {
             background: linear-gradient(135deg, #6c757d 0%, #565e64 100%);
         }
+
         .quick-action {
+            border-radius: 1rem;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            background-color: #fff;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            height: 100%;
+        }
+
+        .quick-action:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+        }
+
+        .quick-action-icon {
+            font-size: 2rem;
+            color: var(--primary-color);
             transition: all 0.3s ease;
         }
-        .quick-action:hover {
-            transform: scale(1.05);
+
+        .quick-action:hover .quick-action-icon {
+            transform: scale(1.2);
         }
+
         .section-title {
             position: relative;
             margin-bottom: 2rem;
-            padding-bottom: 0.5rem;
+            font-weight: 600;
+            color: #333;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
+
         .section-title::after {
             content: '';
             position: absolute;
             left: 0;
-            bottom: 0;
-            width: 50px;
-            height: 3px;
-            background-color: #0d6efd;
+            bottom: -10px;
+            width: 60px;
+            height: 4px;
+            background-color: var(--primary-color);
+            border-radius: 2px;
+        }
+
+        .alert-card {
+            border-radius: 1rem;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .alert-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        .appointment-card {
+            border-radius: 1rem;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .appointment-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
         }
     </style>
 </head>
 <body>
 <div layout:fragment="content">
-    <div class="container-fluid py-5">
-        <!-- Entête -->
-        <div class="row mb-5">
-            <div class="col-12 text-center">
-                <h1 class="display-4">Système de Gestion Hospitalière</h1>
-                <p class="lead">Plateforme complète de gestion des patients, médecins, départements, rendez-vous, prescriptions et médicaments.</p>
+    <div class="container">
+        <!-- Hero Section -->
+        <div class="hero-section p-5 mb-5">
+            <div class="hero-content">
+                <h1 class="display-4 fw-bold mb-3">MediSys - Gestion Hospitalière</h1>
+                <p class="lead mb-4">Bienvenue dans votre solution complète de gestion hospitalière, conçue pour optimiser les flux de travail cliniques et administratifs.</p>
+                <div class="d-flex flex-wrap gap-3">
+                    <a href="#main-modules" class="btn btn-light btn-lg">
+                        <i class="bi bi-arrow-down-circle me-2"></i>Explorer les modules
+                    </a>
+                    <a th:href="@{/patients}" class="btn btn-outline-light btn-lg">
+                        <i class="bi bi-people me-2"></i>Gestion des patients
+                    </a>
+                </div>
             </div>
         </div>
 
-        <!-- Statistiques générales -->
+        <!-- Statistiques -->
         <div class="row mb-5">
             <div class="col-12">
-                <div class="card shadow">
-                    <div class="card-header bg-primary text-white">
-                        <h3 class="card-title mb-0">Tableau de bord</h3>
-                    </div>
-                    <div class="card-body">
-                        <div class="row text-center">
-                            <div class="col-md-2 mb-3">
-                                <div class="p-3 border rounded h-100">
-                                    <i class="bi bi-people-fill text-primary card-icon"></i>
-                                    <div class="stats-counter text-primary">5</div>
-                                    <h5>Patients</h5>
-                                </div>
-                            </div>
-                            <div class="col-md-2 mb-3">
-                                <div class="p-3 border rounded h-100">
-                                    <i class="bi bi-person-badge-fill text-success card-icon"></i>
-                                    <div class="stats-counter text-success">0</div>
-                                    <h5>Médecins</h5>
-                                </div>
-                            </div>
-                            <div class="col-md-2 mb-3">
-                                <div class="p-3 border rounded h-100">
-                                    <i class="bi bi-building text-danger card-icon"></i>
-                                    <div class="stats-counter text-danger">0</div>
-                                    <h5>Départements</h5>
-                                </div>
-                            </div>
-                            <div class="col-md-2 mb-3">
-                                <div class="p-3 border rounded h-100">
-                                    <i class="bi bi-calendar-check text-info card-icon"></i>
-                                    <div class="stats-counter text-info">0</div>
-                                    <h5>Rendez-vous</h5>
-                                </div>
-                            </div>
-                            <div class="col-md-2 mb-3">
-                                <div class="p-3 border rounded h-100">
-                                    <i class="bi bi-capsule text-warning card-icon"></i>
-                                    <div class="stats-counter text-warning">0</div>
-                                    <h5>Médicaments</h5>
-                                </div>
-                            </div>
-                            <div class="col-md-2 mb-3">
-                                <div class="p-3 border rounded h-100">
-                                    <i class="bi bi-file-earmark-text text-secondary card-icon"></i>
-                                    <div class="stats-counter text-secondary">0</div>
-                                    <h5>Prescriptions</h5>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <h2 class="section-title">Tableau de bord</h2>
+            </div>
+
+            <div class="col-md-4 col-lg-2 mb-4">
+                <div class="stats-card bg-primary text-white p-4 text-center">
+                    <i class="bi bi-people-fill stats-icon"></i>
+                    <p class="stats-number">5</p>
+                    <p class="stats-label">Patients</p>
+                </div>
+            </div>
+
+            <div class="col-md-4 col-lg-2 mb-4">
+                <div class="stats-card bg-success text-white p-4 text-center">
+                    <i class="bi bi-person-badge-fill stats-icon"></i>
+                    <p class="stats-number">0</p>
+                    <p class="stats-label">Médecins</p>
+                </div>
+            </div>
+
+            <div class="col-md-4 col-lg-2 mb-4">
+                <div class="stats-card bg-danger text-white p-4 text-center">
+                    <i class="bi bi-building stats-icon"></i>
+                    <p class="stats-number">0</p>
+                    <p class="stats-label">Départements</p>
+                </div>
+            </div>
+
+            <div class="col-md-4 col-lg-2 mb-4">
+                <div class="stats-card bg-info text-white p-4 text-center">
+                    <i class="bi bi-calendar-check stats-icon"></i>
+                    <p class="stats-number">0</p>
+                    <p class="stats-label">Rendez-vous</p>
+                </div>
+            </div>
+
+            <div class="col-md-4 col-lg-2 mb-4">
+                <div class="stats-card bg-warning text-white p-4 text-center">
+                    <i class="bi bi-capsule stats-icon"></i>
+                    <p class="stats-number">0</p>
+                    <p class="stats-label">Médicaments</p>
+                </div>
+            </div>
+
+            <div class="col-md-4 col-lg-2 mb-4">
+                <div class="stats-card bg-secondary text-white p-4 text-center">
+                    <i class="bi bi-file-earmark-text stats-icon"></i>
+                    <p class="stats-number">0</p>
+                    <p class="stats-label">Prescriptions</p>
                 </div>
             </div>
         </div>
 
         <!-- Modules principaux -->
-        <div class="row mb-5">
+        <div class="row mb-5" id="main-modules">
             <div class="col-md-12">
                 <h2 class="section-title">Modules principaux</h2>
             </div>
 
             <!-- Gestion des patients -->
             <div class="col-md-4 mb-4">
-                <div class="card feature-card shadow-sm h-100 text-white gradient-primary">
-                    <div class="card-body text-center d-flex flex-column">
-                        <i class="bi bi-people-fill card-icon"></i>
-                        <h3 class="card-title">Patients</h3>
-                        <p class="card-text flex-grow-1">Consultez, ajoutez et modifiez les informations des patients. Gérez les dossiers médicaux et suivez les prescriptions.</p>
-                        <a th:href="@{/index}" class="btn btn-light mt-2">
+                <div class="feature-card text-white gradient-primary shadow">
+                    <div class="card-body text-center d-flex flex-column p-4">
+                        <i class="bi bi-people-fill stats-icon"></i>
+                        <h3 class="card-title mb-3">Patients</h3>
+                        <p class="card-text flex-grow-1">Gérez les dossiers médicaux des patients, suivez les traitements et assurez un suivi personnalisé pour chaque patient.</p>
+                        <a th:href="@{/index}" class="btn btn-light mt-3">
                             <i class="bi bi-arrow-right"></i> Accéder
                         </a>
                     </div>
@@ -155,12 +267,12 @@
 
             <!-- Gestion des médecins -->
             <div class="col-md-4 mb-4">
-                <div class="card feature-card shadow-sm h-100 text-white gradient-success">
-                    <div class="card-body text-center d-flex flex-column">
-                        <i class="bi bi-person-badge-fill card-icon"></i>
-                        <h3 class="card-title">Médecins</h3>
-                        <p class="card-text flex-grow-1">Gérez les médecins, leurs spécialités et affectations aux départements. Suivez les rendez-vous et prescriptions émises.</p>
-                        <a th:href="@{/medecins}" class="btn btn-light mt-2">
+                <div class="feature-card text-white gradient-success shadow">
+                    <div class="card-body text-center d-flex flex-column p-4">
+                        <i class="bi bi-person-badge-fill stats-icon"></i>
+                        <h3 class="card-title mb-3">Médecins</h3>
+                        <p class="card-text flex-grow-1">Organisez les plannings des médecins, gérez leurs spécialités et optimisez la distribution des ressources médicales.</p>
+                        <a th:href="@{/medecins}" class="btn btn-light mt-3">
                             <i class="bi bi-arrow-right"></i> Accéder
                         </a>
                     </div>
@@ -169,12 +281,12 @@
 
             <!-- Gestion des départements -->
             <div class="col-md-4 mb-4">
-                <div class="card feature-card shadow-sm h-100 text-white gradient-danger">
-                    <div class="card-body text-center d-flex flex-column">
-                        <i class="bi bi-building card-icon"></i>
-                        <h3 class="card-title">Départements</h3>
-                        <p class="card-text flex-grow-1">Administrez les services de l'hôpital, affectez des chefs de service et gérez la capacité en lits.</p>
-                        <a th:href="@{/departements}" class="btn btn-light mt-2">
+                <div class="feature-card text-white gradient-danger shadow">
+                    <div class="card-body text-center d-flex flex-column p-4">
+                        <i class="bi bi-building stats-icon"></i>
+                        <h3 class="card-title mb-3">Départements</h3>
+                        <p class="card-text flex-grow-1">Administrez les différents services de l'hôpital, assignez des chefs de service et gérez les capacités en lits.</p>
+                        <a th:href="@{/departements}" class="btn btn-light mt-3">
                             <i class="bi bi-arrow-right"></i> Accéder
                         </a>
                     </div>
@@ -190,12 +302,12 @@
 
             <!-- Rendez-vous -->
             <div class="col-md-4 mb-4">
-                <div class="card feature-card shadow-sm h-100 text-white gradient-info">
-                    <div class="card-body text-center d-flex flex-column">
-                        <i class="bi bi-calendar-check card-icon"></i>
-                        <h3 class="card-title">Rendez-vous</h3>
-                        <p class="card-text flex-grow-1">Planifiez et gérez les consultations entre patients et médecins. Suivez les statuts et respectez les disponibilités.</p>
-                        <a th:href="@{/rendezvous}" class="btn btn-light mt-2">
+                <div class="feature-card text-white gradient-info shadow">
+                    <div class="card-body text-center d-flex flex-column p-4">
+                        <i class="bi bi-calendar-check stats-icon"></i>
+                        <h3 class="card-title mb-3">Rendez-vous</h3>
+                        <p class="card-text flex-grow-1">Planifiez et gérez les consultations. Suivez le statut des rendez-vous et optimisez les disponibilités des médecins.</p>
+                        <a th:href="@{/rendezvous}" class="btn btn-light mt-3">
                             <i class="bi bi-arrow-right"></i> Accéder
                         </a>
                     </div>
@@ -204,12 +316,12 @@
 
             <!-- Médicaments -->
             <div class="col-md-4 mb-4">
-                <div class="card feature-card shadow-sm h-100 text-white gradient-warning">
-                    <div class="card-body text-center d-flex flex-column">
-                        <i class="bi bi-capsule card-icon"></i>
-                        <h3 class="card-title">Médicaments</h3>
-                        <p class="card-text flex-grow-1">Gérez l'inventaire de la pharmacie, suivez les stocks et les alertes. Contrôlez les dates d'expiration.</p>
-                        <a th:href="@{/medicaments}" class="btn btn-light mt-2">
+                <div class="feature-card text-white gradient-warning shadow">
+                    <div class="card-body text-center d-flex flex-column p-4">
+                        <i class="bi bi-capsule stats-icon"></i>
+                        <h3 class="card-title mb-3">Pharmacie</h3>
+                        <p class="card-text flex-grow-1">Gérez l'inventaire pharmaceutique, contrôlez les stocks et recevez des alertes pour les niveaux critiques et dates d'expiration.</p>
+                        <a th:href="@{/medicaments}" class="btn btn-light mt-3">
                             <i class="bi bi-arrow-right"></i> Accéder
                         </a>
                     </div>
@@ -218,12 +330,12 @@
 
             <!-- Prescriptions -->
             <div class="col-md-4 mb-4">
-                <div class="card feature-card shadow-sm h-100 text-white gradient-secondary">
-                    <div class="card-body text-center d-flex flex-column">
-                        <i class="bi bi-file-earmark-text card-icon"></i>
-                        <h3 class="card-title">Prescriptions</h3>
-                        <p class="card-text flex-grow-1">Créez et gérez les ordonnances médicales. Associez les médicaments avec leurs posologies et suivez les traitements.</p>
-                        <a th:href="@{/prescriptions}" class="btn btn-light mt-2">
+                <div class="feature-card text-white gradient-secondary shadow">
+                    <div class="card-body text-center d-flex flex-column p-4">
+                        <i class="bi bi-file-earmark-text stats-icon"></i>
+                        <h3 class="card-title mb-3">Prescriptions</h3>
+                        <p class="card-text flex-grow-1">Créez et gérez les ordonnances médicales avec dosages personnalisés et suivez l'évolution des traitements prescrits.</p>
+                        <a th:href="@{/prescriptions}" class="btn btn-light mt-3">
                             <i class="bi bi-arrow-right"></i> Accéder
                         </a>
                     </div>
@@ -238,81 +350,110 @@
             </div>
 
             <div class="col-6 col-md-2 mb-3">
-                <a th:href="@{/formPatients}" class="card bg-light text-center p-3 text-decoration-none quick-action h-100 shadow-sm">
-                    <i class="bi bi-person-plus-fill fs-1 text-primary"></i>
-                    <p class="mt-2 mb-0">Nouveau patient</p>
+                <a th:href="@{/formPatients}" class="quick-action d-flex flex-column align-items-center p-3 h-100 text-decoration-none">
+                    <i class="bi bi-person-plus-fill quick-action-icon mb-3"></i>
+                    <span class="text-dark">Nouveau patient</span>
                 </a>
             </div>
+
             <div class="col-6 col-md-2 mb-3">
-                <a th:href="@{/medecins/nouveau}" class="card bg-light text-center p-3 text-decoration-none quick-action h-100 shadow-sm">
-                    <i class="bi bi-person-plus-fill fs-1 text-success"></i>
-                    <p class="mt-2 mb-0">Nouveau médecin</p>
+                <a th:href="@{/medecins/nouveau}" class="quick-action d-flex flex-column align-items-center p-3 h-100 text-decoration-none">
+                    <i class="bi bi-person-plus-fill quick-action-icon mb-3"></i>
+                    <span class="text-dark">Nouveau médecin</span>
                 </a>
             </div>
+
             <div class="col-6 col-md-2 mb-3">
-                <a th:href="@{/departements/nouveau}" class="card bg-light text-center p-3 text-decoration-none quick-action h-100 shadow-sm">
-                    <i class="bi bi-building-add fs-1 text-danger"></i>
-                    <p class="mt-2 mb-0">Nouveau département</p>
+                <a th:href="@{/departements/nouveau}" class="quick-action d-flex flex-column align-items-center p-3 h-100 text-decoration-none">
+                    <i class="bi bi-building-add quick-action-icon mb-3"></i>
+                    <span class="text-dark">Nouveau département</span>
                 </a>
             </div>
+
             <div class="col-6 col-md-2 mb-3">
-                <a th:href="@{/rendezvous/nouveau}" class="card bg-light text-center p-3 text-decoration-none quick-action h-100 shadow-sm">
-                    <i class="bi bi-calendar-plus fs-1 text-info"></i>
-                    <p class="mt-2 mb-0">Nouveau rendez-vous</p>
+                <a th:href="@{/rendezvous/nouveau}" class="quick-action d-flex flex-column align-items-center p-3 h-100 text-decoration-none">
+                    <i class="bi bi-calendar-plus quick-action-icon mb-3"></i>
+                    <span class="text-dark">Nouveau rendez-vous</span>
                 </a>
             </div>
+
             <div class="col-6 col-md-2 mb-3">
-                <a th:href="@{/medicaments/nouveau}" class="card bg-light text-center p-3 text-decoration-none quick-action h-100 shadow-sm">
-                    <i class="bi bi-plus-circle fs-1 text-warning"></i>
-                    <p class="mt-2 mb-0">Nouveau médicament</p>
+                <a th:href="@{/medicaments/nouveau}" class="quick-action d-flex flex-column align-items-center p-3 h-100 text-decoration-none">
+                    <i class="bi bi-plus-circle quick-action-icon mb-3"></i>
+                    <span class="text-dark">Nouveau médicament</span>
                 </a>
             </div>
+
             <div class="col-6 col-md-2 mb-3">
-                <a th:href="@{/prescriptions/nouvelle}" class="card bg-light text-center p-3 text-decoration-none quick-action h-100 shadow-sm">
-                    <i class="bi bi-file-earmark-plus fs-1 text-secondary"></i>
-                    <p class="mt-2 mb-0">Nouvelle prescription</p>
+                <a th:href="@{/prescriptions/nouvelle}" class="quick-action d-flex flex-column align-items-center p-3 h-100 text-decoration-none">
+                    <i class="bi bi-file-earmark-plus quick-action-icon mb-3"></i>
+                    <span class="text-dark">Nouvelle prescription</span>
                 </a>
             </div>
         </div>
 
         <!-- Alertes et tâches -->
         <div class="row">
+            <!-- Alertes -->
             <div class="col-md-6 mb-4">
-                <div class="card shadow-sm h-100">
-                    <div class="card-header bg-danger text-white">
-                        <h4 class="mb-0"><i class="bi bi-exclamation-triangle"></i> Alertes</h4>
+                <div class="alert-card card shadow h-100">
+                    <div class="card-header bg-danger text-white d-flex align-items-center">
+                        <i class="bi bi-exclamation-triangle-fill fs-4 me-2"></i>
+                        <h4 class="mb-0">Alertes</h4>
                     </div>
                     <div class="card-body">
-                        <ul class="list-group">
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                Médicaments sous le seuil d'alerte
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0">
+                                <span>
+                                    <i class="bi bi-box2-fill text-danger me-2"></i>
+                                    Médicaments sous le seuil d'alerte
+                                </span>
                                 <a th:href="@{/medicaments/alerte}" class="badge bg-danger rounded-pill">0</a>
                             </li>
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                Médicaments proches de l'expiration
+                            <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0">
+                                <span>
+                                    <i class="bi bi-calendar-x-fill text-warning me-2"></i>
+                                    Médicaments proches de l'expiration
+                                </span>
                                 <a href="#" class="badge bg-warning rounded-pill">0</a>
                             </li>
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                Patients en attente de consultation
+                            <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0">
+                                <span>
+                                    <i class="bi bi-person-exclamation text-info me-2"></i>
+                                    Patients en attente de consultation
+                                </span>
                                 <span class="badge bg-info rounded-pill">0</span>
                             </li>
                         </ul>
+
+                        <div class="mt-3 text-center">
+                            <a th:href="@{/medicaments/alerte}" class="btn btn-outline-danger">
+                                <i class="bi bi-bell"></i> Voir toutes les alertes
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
+
+            <!-- Rendez-vous du jour -->
             <div class="col-md-6 mb-4">
-                <div class="card shadow-sm h-100">
-                    <div class="card-header bg-primary text-white">
-                        <h4 class="mb-0"><i class="bi bi-calendar-week"></i> Rendez-vous du jour</h4>
+                <div class="appointment-card card shadow h-100">
+                    <div class="card-header bg-primary text-white d-flex align-items-center">
+                        <i class="bi bi-calendar-week fs-4 me-2"></i>
+                        <h4 class="mb-0">Rendez-vous du jour</h4>
                     </div>
                     <div class="card-body">
-                        <div class="alert alert-info">
-                            <i class="bi bi-info-circle-fill me-2"></i>
-                            Aucun rendez-vous prévu aujourd'hui.
+                        <div class="alert alert-info d-flex align-items-center">
+                            <i class="bi bi-info-circle-fill fs-4 me-3"></i>
+                            <div>Aucun rendez-vous prévu aujourd'hui.</div>
                         </div>
-                        <div class="text-center mt-3">
+
+                        <div class="text-center mt-4">
                             <a th:href="@{/rendezvous}" class="btn btn-outline-primary">
                                 <i class="bi bi-calendar"></i> Voir le planning complet
+                            </a>
+                            <a th:href="@{/rendezvous/nouveau}" class="btn btn-primary ms-2">
+                                <i class="bi bi-calendar-plus"></i> Nouveau rendez-vous
                             </a>
                         </div>
                     </div>

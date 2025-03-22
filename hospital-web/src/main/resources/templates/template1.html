@@ -1,34 +1,210 @@
 <!DOCTYPE html>
 <html lang="fr"
       xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
->
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head>
   <meta charset="UTF-8">
-  <title>Gestion Hospitalière</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Système de Gestion Hospitalière</title>
   <link rel="stylesheet" href="/webjars/bootstrap/5.2.3/css/bootstrap.min.css">
-  <script src="/webjars/bootstrap/5.2.3/js/bootstrap.bundle.js"></script>
-  <script src="/webjars/jquery/3.6.4/jquery.min.js"></script>
   <link rel="stylesheet" href="/webjars/bootstrap-icons/1.10.3/font/bootstrap-icons.css">
+  <script src="/webjars/jquery/3.6.4/jquery.min.js" defer></script>
+  <script src="/webjars/bootstrap/5.2.3/js/bootstrap.bundle.js" defer></script>
   <style>
-    .dropdown-menu .dropdown-item:hover {
-      background-color: rgba(var(--bs-primary-rgb), 0.1);
+    :root {
+      --primary-color: #0d6efd;
+      --secondary-color: #6c757d;
+      --success-color: #198754;
+      --info-color: #0dcaf0;
+      --warning-color: #ffc107;
+      --danger-color: #dc3545;
+      --light-color: #f8f9fa;
+      --dark-color: #212529;
     }
-    .nav-item .nav-link:hover {
+
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      background-color: #f5f7fa;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    main {
+      flex: 1;
+    }
+
+    .navbar {
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .nav-link {
+      position: relative;
+      transition: all 0.3s ease;
+    }
+
+    .nav-link:hover {
       color: #fff !important;
     }
-    .nav-pills .nav-link.active {
-      background-color: #0d6efd;
+
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      bottom: 0;
+      left: 0;
+      background-color: #fff;
+      transition: width 0.3s ease;
+    }
+
+    .nav-link:hover::after {
+      width: 100%;
+    }
+
+    .dropdown-menu {
+      border-radius: 0.5rem;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      border: none;
+    }
+
+    .dropdown-item {
+      padding: 0.5rem 1rem;
+      transition: all 0.2s ease;
+    }
+
+    .dropdown-item:hover {
+      background-color: rgba(var(--bs-primary-rgb), 0.1);
+    }
+
+    .card {
+      border: none;
+      border-radius: 0.75rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .card:hover {
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-header {
+      border-top-left-radius: 0.75rem !important;
+      border-top-right-radius: 0.75rem !important;
+    }
+
+    .btn {
+      border-radius: 0.5rem;
+      padding: 0.5rem 1.25rem;
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+      background-color: var(--primary-color);
+      border-color: var(--primary-color);
+    }
+
+    .btn-primary:hover {
+      background-color: #0b5ed7;
+      border-color: #0a58ca;
+    }
+
+    .btn-secondary {
+      background-color: var(--secondary-color);
+      border-color: var(--secondary-color);
+    }
+
+    .btn-success {
+      background-color: var(--success-color);
+      border-color: var(--success-color);
+    }
+
+    .btn-success:hover {
+      background-color: #157347;
+      border-color: #146c43;
+    }
+
+    .btn-info {
+      background-color: var(--info-color);
+      border-color: var(--info-color);
+    }
+
+    .btn-warning {
+      background-color: var(--warning-color);
+      border-color: var(--warning-color);
+    }
+
+    .btn-danger {
+      background-color: var(--danger-color);
+      border-color: var(--danger-color);
+    }
+
+    .badge {
+      padding: 0.5em 0.8em;
+      font-weight: 500;
+    }
+
+    footer {
+      background-color: var(--dark-color);
+      color: #fff;
+      padding: 2.5rem 0;
+    }
+
+    footer a {
+      color: rgba(255, 255, 255, 0.7);
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    footer a:hover {
+      color: #fff;
+    }
+
+    .footer-heading {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 1.25rem;
+    }
+
+    .table {
+      border-radius: 0.5rem;
+      overflow: hidden;
+    }
+
+    .form-control, .form-select {
+      border-radius: 0.5rem;
+      padding: 0.5rem 1rem;
+      border: 1px solid #dee2e6;
+    }
+
+    .form-control:focus, .form-select:focus {
+      box-shadow: 0 0 0 3px rgba(var(--primary-color-rgb), 0.25);
+    }
+
+    .pagination .page-link {
+      border-radius: 0.5rem;
+      margin: 0 0.15rem;
+    }
+
+    @media (max-width: 768px) {
+      .navbar-brand {
+        font-size: 1.25rem;
+      }
+
+      .container {
+        padding: 0 1rem;
+      }
     }
   </style>
 </head>
-<body class="d-flex flex-column min-vh-100">
+<body>
 <!-- Header -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
   <div class="container-fluid">
-    <a class="navbar-brand" th:href="@{/home}">
-      <i class="bi bi-hospital fs-4 me-2"></i>
-      Gestion Hospitalière
+    <a class="navbar-brand d-flex align-items-center" th:href="@{/home}">
+      <i class="bi bi-hospital fs-3 me-2"></i>
+      <span class="fw-bold">MediSys</span>
+      <span class="ms-2 text-info fw-light">Gestion Hospitalière</span>
     </a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
@@ -47,8 +223,8 @@
             <i class="bi bi-people-fill me-1"></i> Patients
           </a>
           <ul class="dropdown-menu" aria-labelledby="patientsDropdown">
-            <li><a class="dropdown-item" th:href="@{/index}">Liste des patients</a></li>
-            <li><a class="dropdown-item" th:href="@{/formPatients}">Nouveau patient</a></li>
+            <li><a class="dropdown-item" th:href="@{/index}"><i class="bi bi-list-ul me-2"></i>Liste des patients</a></li>
+            <li><a class="dropdown-item" th:href="@{/formPatients}"><i class="bi bi-person-plus me-2"></i>Nouveau patient</a></li>
           </ul>
         </li>
 
@@ -58,8 +234,8 @@
             <i class="bi bi-person-badge-fill me-1"></i> Médecins
           </a>
           <ul class="dropdown-menu" aria-labelledby="medecinsDropdown">
-            <li><a class="dropdown-item" th:href="@{/medecins}">Liste des médecins</a></li>
-            <li><a class="dropdown-item" th:href="@{/medecins/nouveau}">Nouveau médecin</a></li>
+            <li><a class="dropdown-item" th:href="@{/medecins}"><i class="bi bi-list-ul me-2"></i>Liste des médecins</a></li>
+            <li><a class="dropdown-item" th:href="@{/medecins/nouveau}"><i class="bi bi-person-plus me-2"></i>Nouveau médecin</a></li>
           </ul>
         </li>
 
@@ -69,8 +245,8 @@
             <i class="bi bi-building me-1"></i> Départements
           </a>
           <ul class="dropdown-menu" aria-labelledby="departementsDropdown">
-            <li><a class="dropdown-item" th:href="@{/departements}">Liste des départements</a></li>
-            <li><a class="dropdown-item" th:href="@{/departements/nouveau}">Nouveau département</a></li>
+            <li><a class="dropdown-item" th:href="@{/departements}"><i class="bi bi-list-ul me-2"></i>Liste des départements</a></li>
+            <li><a class="dropdown-item" th:href="@{/departements/nouveau}"><i class="bi bi-plus-circle me-2"></i>Nouveau département</a></li>
           </ul>
         </li>
 
@@ -80,8 +256,32 @@
             <i class="bi bi-calendar-check me-1"></i> Rendez-vous
           </a>
           <ul class="dropdown-menu" aria-labelledby="rdvDropdown">
-            <li><a class="dropdown-item" th:href="@{/rendezvous}">Liste des rendez-vous</a></li>
-            <li><a class="dropdown-item" th:href="@{/rendezvous/nouveau}">Nouveau rendez-vous</a></li>
+            <li><a class="dropdown-item" th:href="@{/rendezvous}"><i class="bi bi-calendar-week me-2"></i>Calendrier</a></li>
+            <li><a class="dropdown-item" th:href="@{/rendezvous/nouveau}"><i class="bi bi-calendar-plus me-2"></i>Nouveau rendez-vous</a></li>
+          </ul>
+        </li>
+
+        <!-- Médicaments -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="medicamentsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-capsule me-1"></i> Pharmacie
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="medicamentsDropdown">
+            <li><a class="dropdown-item" th:href="@{/medicaments}"><i class="bi bi-list-ul me-2"></i>Inventaire</a></li>
+            <li><a class="dropdown-item" th:href="@{/medicaments/nouveau}"><i class="bi bi-plus-circle me-2"></i>Nouveau médicament</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" th:href="@{/medicaments/alerte}"><i class="bi bi-exclamation-triangle me-2"></i>Alertes de stock</a></li>
+          </ul>
+        </li>
+
+        <!-- Prescriptions -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="prescriptionsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-file-earmark-text me-1"></i> Prescriptions
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="prescriptionsDropdown">
+            <li><a class="dropdown-item" th:href="@{/prescriptions}"><i class="bi bi-list-ul me-2"></i>Liste des prescriptions</a></li>
+            <li><a class="dropdown-item" th:href="@{/prescriptions/nouvelle}"><i class="bi bi-file-earmark-plus me-2"></i>Nouvelle prescription</a></li>
           </ul>
         </li>
 
@@ -100,6 +300,7 @@
             <option selected value="patients">Patients</option>
             <option value="medecins">Médecins</option>
             <option value="rendezvous">Rendez-vous</option>
+            <option value="medicaments">Médicaments</option>
           </select>
           <input class="form-control" type="search" placeholder="Rechercher..." aria-label="Search">
           <button class="btn btn-outline-light" type="submit">
@@ -112,50 +313,62 @@
 </nav>
 
 <!-- Main Content -->
-<main class="flex-grow-1">
+<main class="flex-grow-1 py-4">
   <div layout:fragment="content">
     <!-- Le contenu spécifique de chaque page sera inséré ici -->
   </div>
 </main>
 
 <!-- Footer -->
-<footer class="bg-dark text-white py-4 mt-auto">
+<footer class="mt-auto">
   <div class="container">
     <div class="row">
-      <div class="col-md-4">
-        <h5>Système de Gestion Hospitalière</h5>
-        <p>Une application complète pour la gestion des patients, médecins, départements et rendez-vous.</p>
-      </div>
-      <div class="col-md-4">
-        <h5>Modules</h5>
-        <div class="row">
-          <div class="col-6">
-            <ul class="list-unstyled">
-              <li><a class="text-white-50" th:href="@{/index}">Patients</a></li>
-              <li><a class="text-white-50" th:href="@{/medecins}">Médecins</a></li>
-            </ul>
-          </div>
-          <div class="col-6">
-            <ul class="list-unstyled">
-              <li><a class="text-white-50" th:href="@{/departements}">Départements</a></li>
-              <li><a class="text-white-50" th:href="@{/rendezvous}">Rendez-vous</a></li>
-            </ul>
-          </div>
+      <div class="col-md-4 mb-4 mb-md-0">
+        <h5 class="footer-heading">MediSys</h5>
+        <p class="text-light-50">Une application complète pour la gestion hospitalière moderne, offrant des solutions intégrées pour améliorer les soins de santé.</p>
+        <div class="d-flex mt-4">
+          <a href="#" class="me-3"><i class="bi bi-facebook fs-4"></i></a>
+          <a href="#" class="me-3"><i class="bi bi-twitter fs-4"></i></a>
+          <a href="#" class="me-3"><i class="bi bi-linkedin fs-4"></i></a>
         </div>
       </div>
+      <div class="col-md-2 mb-4 mb-md-0">
+        <h5 class="footer-heading">Modules</h5>
+        <ul class="list-unstyled">
+          <li class="mb-2"><a th:href="@{/index}"><i class="bi bi-people me-2"></i>Patients</a></li>
+          <li class="mb-2"><a th:href="@{/medecins}"><i class="bi bi-person-badge me-2"></i>Médecins</a></li>
+          <li class="mb-2"><a th:href="@{/departements}"><i class="bi bi-building me-2"></i>Départements</a></li>
+          <li class="mb-2"><a th:href="@{/rendezvous}"><i class="bi bi-calendar me-2"></i>Rendez-vous</a></li>
+        </ul>
+      </div>
+      <div class="col-md-2 mb-4 mb-md-0">
+        <h5 class="footer-heading">Liens rapides</h5>
+        <ul class="list-unstyled">
+          <li class="mb-2"><a th:href="@{/home}"><i class="bi bi-house me-2"></i>Accueil</a></li>
+          <li class="mb-2"><a th:href="@{/medicaments}"><i class="bi bi-capsule me-2"></i>Pharmacie</a></li>
+          <li class="mb-2"><a th:href="@{/prescriptions}"><i class="bi bi-file-text me-2"></i>Prescriptions</a></li>
+          <li class="mb-2"><a href="#"><i class="bi bi-graph-up me-2"></i>Statistiques</a></li>
+        </ul>
+      </div>
       <div class="col-md-4">
-        <h5>Contact</h5>
-        <address class="text-white-50">
-          <i class="bi bi-geo-alt-fill me-2"></i>123 Avenue Hospitalière<br>
-          <i class="bi bi-telephone-fill me-2"></i>+212 5XX-XXXXXX<br>
-          <i class="bi bi-envelope-fill me-2"></i>contact@hopital.org
+        <h5 class="footer-heading">Contact</h5>
+        <address class="mb-0 text-light-50">
+          <div class="mb-2"><i class="bi bi-geo-alt-fill me-2"></i>123 Avenue Hospitalière, Casablanca</div>
+          <div class="mb-2"><i class="bi bi-telephone-fill me-2"></i>+212 5XX-XXXXXX</div>
+          <div class="mb-2"><i class="bi bi-envelope-fill me-2"></i>contact@medisys.org</div>
+          <div><i class="bi bi-clock-fill me-2"></i>Lun-Ven: 8h-18h</div>
         </address>
       </div>
     </div>
-    <hr>
+    <hr class="mt-4 mb-3 border-secondary">
     <div class="row">
-      <div class="col-12 text-center">
-        <p class="mb-0">&copy; 2025 Système de Gestion Hospitalière. Tous droits réservés.</p>
+      <div class="col-md-6 text-center text-md-start">
+        <p class="mb-0">&copy; 2025 MediSys - Système de Gestion Hospitalière. Tous droits réservés.</p>
+      </div>
+      <div class="col-md-6 text-center text-md-end">
+        <a href="#" class="text-light-50 me-3">Conditions d'utilisation</a>
+        <a href="#" class="text-light-50 me-3">Politique de confidentialité</a>
+        <a href="#" class="text-light-50">Aide</a>
       </div>
     </div>
   </div>
