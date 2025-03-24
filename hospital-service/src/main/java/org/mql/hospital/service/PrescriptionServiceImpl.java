@@ -33,9 +33,12 @@ public class PrescriptionServiceImpl implements PrescriptionService {
     private final MedecinRepository medecinRepository;
 
     @Override
+    // Dans PrescriptionServiceImpl
     public List<Prescription> getAllPrescriptions() {
         log.info("Récupération de toutes les prescriptions");
-        return prescriptionRepository.findAll();
+        List<Prescription> prescriptions = prescriptionRepository.findAll();
+        log.info("Nombre de prescriptions trouvées : {}", prescriptions.size());
+        return prescriptions;
     }
 
     @Override

@@ -204,7 +204,6 @@
     <a class="navbar-brand d-flex align-items-center" th:href="@{/home}">
       <i class="bi bi-hospital fs-3 me-2"></i>
       <span class="fw-bold">MediSys</span>
-      <span class="ms-2 text-info fw-light">Gestion Hospitalière</span>
     </a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
@@ -292,22 +291,6 @@
           </a>
         </li>
       </ul>
-
-      <!-- Recherche globale -->
-      <form class="d-flex">
-        <div class="input-group">
-          <select class="form-select form-select-sm" style="max-width: 130px;">
-            <option selected value="patients">Patients</option>
-            <option value="medecins">Médecins</option>
-            <option value="rendezvous">Rendez-vous</option>
-            <option value="medicaments">Médicaments</option>
-          </select>
-          <input class="form-control" type="search" placeholder="Rechercher..." aria-label="Search">
-          <button class="btn btn-outline-light" type="submit">
-            <i class="bi bi-search"></i>
-          </button>
-        </div>
-      </form>
     </div>
   </div>
 </nav>

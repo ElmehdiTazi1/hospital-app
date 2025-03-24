@@ -40,8 +40,11 @@ public interface PrescriptionRepository extends JpaRepository<Prescription, Long
     /**
      * Recherche des prescriptions avec critères multiples.
      */
-    @Query("SELECT p FROM Prescription p WHERE " +
-            "(:patientId IS NULL OR p.patient.id = :patientId) AND " +
+    @Query("SELECT DISTINCT p FROM Prescription p " +
+            "LEFT JOIN FETCH p.patient " +
+            "LEFT JOIN FETCH p.medecin " +
+            "LEFT JOIN FETCH p.lignePrescriptions " +
+            "WHERE (:patientId IS NULL OR p.patient.id = :patientId) AND " +
             "(:medecinId IS NULL OR p.medecin.id = :medecinId) AND " +
             "(:statut IS NULL OR p.statut = :statut) AND " +
             "(:dateDebut IS NULL OR p.datePrescription >= :dateDebut) AND " +

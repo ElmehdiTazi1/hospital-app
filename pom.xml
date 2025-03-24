@@ -39,6 +39,9 @@
 		<bootstrap-icons.version>1.10.3</bootstrap-icons.version>
 		<maven-javadoc-plugin.version>3.5.0</maven-javadoc-plugin.version>
 		<boostrap.version>5.2.3</boostrap.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<mysql-connector-java.version>5.1.30</mysql-connector-java.version>
 	</properties>
 
 	<dependencyManagement>
@@ -73,6 +76,11 @@
 				<groupId>org.mql.hospital</groupId>
 				<artifactId>hospital-service</artifactId>
 				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>mysql</groupId>
+				<artifactId>mysql-connector-java</artifactId>
+				<version>5.1.30</version>
 			</dependency>
 			<dependency>
 				<groupId>org.mql.hospital</groupId>
@@ -130,6 +138,18 @@
 					<configuration>
 						<show>private</show>
 						<nohelp>true</nohelp>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-resources-plugin</artifactId>
+					<version>3.3.1</version>
+					<configuration>
+						<encoding>UTF-8</encoding>
+						<nonFilteredFileExtensions>
+							<nonFilteredFileExtension>pdf</nonFilteredFileExtension>
+							<nonFilteredFileExtension>swf</nonFilteredFileExtension>
+						</nonFilteredFileExtensions>
 					</configuration>
 				</plugin>
 			</plugins>
