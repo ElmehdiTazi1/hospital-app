@@ -75,51 +75,6 @@ public class PatientServiceImpl implements PatientService {
         logger.info("Recherche avancée de patients avec le mot-clé: {}", keyword);
         return patientRepository.chercher("%" + keyword + "%", pageable);
     }
-    @Bean
-    public CommandLineRunner initData(PatientRepository patientRepository) {
-        return args -> {
-
-            // Supprime toutes les données existantes
-            patientRepository.deleteAll();
-
-            // Crée des patients de test
-            patientRepository.save(Patient.builder()
-                    .nom("Jean Dupont")
-                    .dateNaissance(new Date(System.currentTimeMillis() - 40L * 365 * 24 * 60 * 60 * 1000))
-                    .malade(true)
-                    .score(150)
-                    .build());
-
-            patientRepository.save(Patient.builder()
-                    .nom("Marie Martin")
-                    .dateNaissance(new Date(System.currentTimeMillis() - 25L * 365 * 24 * 60 * 60 * 1000))
-                    .malade(false)
-                    .score(180)
-                    .build());
-
-            patientRepository.save(Patient.builder()
-                    .nom("Pierre Leclerc")
-                    .dateNaissance(new Date(System.currentTimeMillis() - 67L * 365 * 24 * 60 * 60 * 1000))
-                    .malade(true)
-                    .score(110)
-                    .build());
-
-            patientRepository.save(Patient.builder()
-                    .nom("Sophie Bernard")
-                    .dateNaissance(new Date(System.currentTimeMillis() - 32L * 365 * 24 * 60 * 60 * 1000))
-                    .malade(false)
-                    .score(200)
-                    .build());
-
-            patientRepository.save(Patient.builder()
-                    .nom("Ahmed Alami")
-                    .dateNaissance(new Date(System.currentTimeMillis() - 50L * 365 * 24 * 60 * 60 * 1000))
-                    .malade(true)
-                    .score(125)
-                    .build());
-
-        };
-    }
     // Ajout d'une méthode utilitaire pour vérifier si un patient existe
     public boolean patientExists(Long id) {
         return patientRepository.existsById(id);
