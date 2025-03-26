@@ -21,10 +21,35 @@
             <artifactId>spring-data-commons</artifactId>
         </dependency>
 
+        <!-- Spring Web -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <!-- Swagger/SpringDoc pour la documentation de l'API -->
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+
+        </dependency>
+
+        <!-- Services -->
+        <dependency>
+            <groupId>org.mql.hospital</groupId>
+            <artifactId>hospital-service</artifactId>
+        </dependency>
+
         <!-- Validation API -->
         <dependency>
             <groupId>jakarta.validation</groupId>
             <artifactId>jakarta.validation-api</artifactId>
+        </dependency>
+
+        <!-- ModelMapper pour la conversion DTO-Entity -->
+        <dependency>
+            <groupId>org.modelmapper</groupId>
+            <artifactId>modelmapper</artifactId>
         </dependency>
 
         <!-- Lombok -->
