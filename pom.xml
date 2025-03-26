@@ -105,7 +105,18 @@
 				<version>${lombok.version}</version>
 				<optional>true</optional>
 			</dependency>
-
+			<!-- ModelMapper pour la conversion DTO-Entity -->
+			<dependency>
+				<groupId>org.modelmapper</groupId>
+				<artifactId>modelmapper</artifactId>
+				<version>3.0.0</version>
+			</dependency>
+			<!-- Swagger/SpringDoc pour la documentation de l'API -->
+			<dependency>
+				<groupId>org.springdoc</groupId>
+				<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+				<version>2.2.0</version>
+			</dependency>
 			<!-- Logging -->
 			<dependency>
 				<groupId>ch.qos.logback</groupId>

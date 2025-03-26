@@ -62,4 +62,6 @@ public interface PatientService {
      * @return Une page de patients correspondant aux critères de recherche
      */
     Page<Patient> searchPatients(String keyword, Pageable pageable);
+
+    boolean patientExists(Long id);
 }
