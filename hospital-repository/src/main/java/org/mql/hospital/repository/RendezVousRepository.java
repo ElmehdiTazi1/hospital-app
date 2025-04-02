@@ -63,4 +63,15 @@ public interface RendezVousRepository extends JpaRepository<RendezVous, Long> {
      * Vérifie si un médecin a des rendez-vous pour un créneau donné.
      */
     boolean existsByMedecinIdAndDateHeureBetween(Long medecinId, LocalDateTime debut, LocalDateTime fin);
+
+    /**
+     * Compte le nombre de rendez-vous pour une période donnée et qui ne sont pas annulés.
+     */
+    long countByDateHeureBetweenAndStatutNot(LocalDateTime debut, LocalDateTime fin, RendezVous.StatutRendezVous statut);
+
+    /**
+     * Récupère les rendez-vous pour une période donnée et qui ne sont pas annulés, triés par date et heure.
+     */
+    List<RendezVous> findByDateHeureBetweenAndStatutNotOrderByDateHeureAsc(
+            LocalDateTime debut, LocalDateTime fin, RendezVous.StatutRendezVous statut);
 }

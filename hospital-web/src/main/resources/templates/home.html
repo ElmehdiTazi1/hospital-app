@@ -35,12 +35,16 @@
         }
 
         .stats-card {
+            height: 100%;
             transition: all 0.3s ease;
             transform: translateY(0);
             border-radius: 1rem;
             overflow: hidden;
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
 
         .stats-card:hover {
@@ -58,13 +62,14 @@
             font-size: 2.5rem;
             font-weight: 600;
             margin-bottom: 0;
-            line-height: 1;
+            line-height: 1.2;
         }
 
         .stats-label {
             font-size: 1.1rem;
             margin-top: 0.5rem;
             opacity: 0.9;
+            margin-bottom: 0.5rem;
         }
 
         .feature-card {
@@ -183,11 +188,17 @@
                     <a href="#main-modules" class="btn btn-light btn-lg">
                         <i class="bi bi-arrow-down-circle me-2"></i>Explorer les modules
                     </a>
-                    <a th:href="@{/patients}" class="btn btn-outline-light btn-lg">
+                    <a th:href="@{/index}" class="btn btn-outline-light btn-lg">
                         <i class="bi bi-people me-2"></i>Gestion des patients
                     </a>
                 </div>
             </div>
+        </div>
+
+        <!-- Message d'erreur statistiques si besoin -->
+        <div th:if="${statsError}" class="alert alert-warning mb-4">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            <span>Impossible de charger certaines statistiques. Les données affichées peuvent être incomplètes.</span>
         </div>
 
         <!-- Statistiques -->
@@ -199,7 +210,7 @@
             <div class="col-md-4 col-lg-2 mb-4">
                 <div class="stats-card bg-primary text-white p-4 text-center">
                     <i class="bi bi-people-fill stats-icon"></i>
-                    <p class="stats-number">5</p>
+                    <p class="stats-number" th:text="${patientCount != null ? patientCount : 0}">0</p>
                     <p class="stats-label">Patients</p>
                 </div>
             </div>
@@ -207,7 +218,7 @@
             <div class="col-md-4 col-lg-2 mb-4">
                 <div class="stats-card bg-success text-white p-4 text-center">
                     <i class="bi bi-person-badge-fill stats-icon"></i>
-                    <p class="stats-number">0</p>
+                    <p class="stats-number" th:text="${medecinCount != null ? medecinCount : 0}">0</p>
                     <p class="stats-label">Médecins</p>
                 </div>
             </div>
@@ -215,7 +226,7 @@
             <div class="col-md-4 col-lg-2 mb-4">
                 <div class="stats-card bg-danger text-white p-4 text-center">
                     <i class="bi bi-building stats-icon"></i>
-                    <p class="stats-number">0</p>
+                    <p class="stats-number" th:text="${departementCount != null ? departementCount : 0}">0</p>
                     <p class="stats-label">Départements</p>
                 </div>
             </div>
@@ -223,7 +234,7 @@
             <div class="col-md-4 col-lg-2 mb-4">
                 <div class="stats-card bg-info text-white p-4 text-center">
                     <i class="bi bi-calendar-check stats-icon"></i>
-                    <p class="stats-number">0</p>
+                    <p class="stats-number" th:text="${rendezVousCount != null ? rendezVousCount : 0}">0</p>
                     <p class="stats-label">Rendez-vous</p>
                 </div>
             </div>
@@ -231,7 +242,7 @@
             <div class="col-md-4 col-lg-2 mb-4">
                 <div class="stats-card bg-warning text-white p-4 text-center">
                     <i class="bi bi-capsule stats-icon"></i>
-                    <p class="stats-number">0</p>
+                    <p class="stats-number" th:text="${medicamentCount != null ? medicamentCount : 0}">0</p>
                     <p class="stats-label">Médicaments</p>
                 </div>
             </div>
@@ -239,7 +250,7 @@
             <div class="col-md-4 col-lg-2 mb-4">
                 <div class="stats-card bg-secondary text-white p-4 text-center">
                     <i class="bi bi-file-earmark-text stats-icon"></i>
-                    <p class="stats-number">0</p>
+                    <p class="stats-number" th:text="${prescriptionCount != null ? prescriptionCount : 0}">0</p>
                     <p class="stats-label">Prescriptions</p>
                 </div>
             </div>
@@ -408,23 +419,52 @@
                                     <i class="bi bi-box2-fill text-danger me-2"></i>
                                     Médicaments sous le seuil d'alerte
                                 </span>
-                                <a th:href="@{/medicaments/alerte}" class="badge bg-danger rounded-pill">0</a>
+                                <a th:href="@{/medicaments/alerte}" class="badge bg-danger rounded-pill" th:text="${medicamentsEnAlerte}">0</a>
                             </li>
                             <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0">
                                 <span>
                                     <i class="bi bi-calendar-x-fill text-warning me-2"></i>
                                     Médicaments proches de l'expiration
                                 </span>
-                                <a href="#" class="badge bg-warning rounded-pill">0</a>
+                                <a href="#" class="badge bg-warning rounded-pill" th:text="${medicamentsExpiration}">0</a>
                             </li>
                             <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0">
                                 <span>
                                     <i class="bi bi-person-exclamation text-info me-2"></i>
                                     Patients en attente de consultation
                                 </span>
-                                <span class="badge bg-info rounded-pill">0</span>
+                                <span class="badge bg-info rounded-pill" th:text="${patientsMalades}">0</span>
                             </li>
                         </ul>
+
+                        <!-- Liste des médicaments en alerte -->
+                        <div th:if="${alerteMedicaments != null && !alerteMedicaments.isEmpty()}" class="mt-3">
+                            <h5 class="text-danger"><i class="bi bi-exclamation-circle me-2"></i>Médicaments nécessitant attention</h5>
+                            <div class="table-responsive">
+                                <table class="table table-sm table-hover">
+                                    <thead>
+                                    <tr>
+                                        <th>Nom</th>
+                                        <th>Stock</th>
+                                        <th>Seuil</th>
+                                        <th>Action</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="med : ${alerteMedicaments}" th:if="${med.quantiteStock <= med.seuilAlerte}" class="text-danger">
+                                        <td th:text="${med.nom}">Paracétamol</td>
+                                        <td th:text="${med.quantiteStock}">5</td>
+                                        <td th:text="${med.seuilAlerte}">10</td>
+                                        <td>
+                                            <a th:href="@{/medicaments/{id}/stock(id=${med.id})}" class="btn btn-sm btn-outline-danger">
+                                                <i class="bi bi-plus-circle"></i> Stock
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
 
                         <div class="mt-3 text-center">
                             <a th:href="@{/medicaments/alerte}" class="btn btn-outline-danger">
@@ -443,7 +483,43 @@
                         <h4 class="mb-0">Rendez-vous du jour</h4>
                     </div>
                     <div class="card-body">
-                        <div class="alert alert-info d-flex align-items-center">
+                        <!-- Si des rendez-vous sont disponibles -->
+                        <div th:if="${rendezVousDuJour != null && !rendezVousDuJour.isEmpty()}" class="table-responsive">
+                            <table class="table table-sm table-hover">
+                                <thead>
+                                <tr>
+                                    <th>Heure</th>
+                                    <th>Patient</th>
+                                    <th>Médecin</th>
+                                    <th>Statut</th>
+                                    <th>Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="rdv : ${rendezVousDuJour}">
+                                    <td th:text="${#temporals.format(rdv.dateHeure, 'HH:mm')}">14:30</td>
+                                    <td th:text="${rdv.patient.nom}">Jean Dupont</td>
+                                    <td th:text="${rdv.medecin.nom}">Dr. Martin</td>
+                                    <td>
+                                            <span th:class="${'badge ' +
+                                                (rdv.statut == T(org.mql.hospital.entities.RendezVous.StatutRendezVous).PLANIFIE ? 'bg-info' :
+                                                (rdv.statut == T(org.mql.hospital.entities.RendezVous.StatutRendezVous).CONFIRME ? 'bg-success' :
+                                                (rdv.statut == T(org.mql.hospital.entities.RendezVous.StatutRendezVous).ANNULE ? 'bg-danger' : 'bg-secondary')))}">
+                                                <span th:text="${rdv.statut}">PLANIFIE</span>
+                                            </span>
+                                    </td>
+                                    <td>
+                                        <a th:href="@{/rendezvous/{id}(id=${rdv.id})}" class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-eye"></i> Voir
+                                        </a>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Si aucun rendez-vous n'est prévu -->
+                        <div th:unless="${rendezVousDuJour != null && !rendezVousDuJour.isEmpty()}" class="alert alert-info d-flex align-items-center">
                             <i class="bi bi-info-circle-fill fs-4 me-3"></i>
                             <div>Aucun rendez-vous prévu aujourd'hui.</div>
                         </div>

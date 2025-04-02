@@ -8,8 +8,20 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface PatientRepository extends JpaRepository<Patient,Long> {
+
+    /**
+     * Recherche des patients par nom.
+     */
     Page<Patient> findByNomContains(String keyword, Pageable pageable);
 
+    /**
+     * Recherche avancée de patients avec critères multiples.
+     */
     @Query("select p from Patient p where p.nom like :x")
     Page<Patient> chercher(@Param("x") String keyword, Pageable pageable);
+
+    /**
+     * Compte le nombre de patients malades.
+     */
+    long countByMaladeTrue();
 }

@@ -26,26 +26,6 @@ public class PatientController {
     private PatientService patientService;
 
     /**
-     * Affiche la page d'accueil.
-     *
-     * @return Le nom de la vue à afficher
-     */
-    @GetMapping("/home")
-    public String home() {
-        return "home";
-    }
-
-    /**
-     * Redirection vers la page d'accueil.
-     *
-     * @return Redirection vers la page d'accueil
-     */
-    @GetMapping("/")
-    public String homeRedirect(){
-        return "redirect:/home";
-    }
-
-    /**
      * Affiche la liste des patients avec pagination et filtrage.
      *
      * @param model Le modèle pour les données à envoyer à la vue
@@ -108,7 +88,7 @@ public class PatientController {
     @PostMapping("/savePatient")
     public String savePatient(@Valid Patient patient, BindingResult bindingResult){
         if(bindingResult.hasErrors()){
-           return "patients/form";
+            return "patients/form";
         }
         patientService.savePatient(patient);
         return "redirect:/index?keyword=" + patient.getNom();
