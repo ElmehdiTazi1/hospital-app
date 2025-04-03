@@ -33,6 +33,11 @@ public interface MedecinRepository extends JpaRepository<Medecin, Long> {
     List<Medecin> findByDisponibleTrue();
 
     /**
+     * Compte le nombre de médecins disponibles.
+     */
+    long countByDisponibleTrue();
+
+    /**
      * Recherche des médecins par département.
      */
     List<Medecin> findByDepartementId(Long departementId);

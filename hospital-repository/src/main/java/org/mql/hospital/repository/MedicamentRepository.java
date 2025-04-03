@@ -39,9 +39,20 @@ public interface MedicamentRepository extends JpaRepository<Medicament, Long> {
     List<Medicament> findMedicamentsEnAlerte();
 
     /**
+     * Compte le nombre de médicaments dont le stock est inférieur ou égal au seuil d'alerte.
+     */
+    @Query("SELECT COUNT(m) FROM Medicament m WHERE m.quantiteStock <= m.seuilAlerte")
+    long countByQuantiteStockLessThanEqualSeuilAlerte();
+
+    /**
      * Recherche des médicaments qui vont expirer avant une date donnée.
      */
     List<Medicament> findByDateExpirationBeforeAndQuantiteStockGreaterThan(Date date, Integer quantiteMinimale);
+
+    /**
+     * Compte le nombre de médicaments qui vont expirer avant une date donnée.
+     */
+    long countByDateExpirationBeforeAndQuantiteStockGreaterThan(Date date, Integer quantiteMinimale);
 
     /**
      * Recherche simple des médicaments.
