@@ -2,7 +2,7 @@
 <html lang="fr"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layouts/patient-layout}">
+      layout:decorate="template1.html">
 <head>
     <meta charset="UTF-8">
     <title>Tableau de bord patient - MediSys</title>
@@ -160,7 +160,7 @@
         <!-- Section Bienvenue -->
         <div class="welcome-card p-4 mb-4">
             <div class="welcome-content">
-                <h2 class="mb-1" th:text="'Bonjour, ' + ${patient.prenom}"></h2>
+                <h2 class="mb-1" th:text="'Bonjour, ' + ${patient.nom}"></h2>
                 <p class="mb-3">Bienvenue sur votre tableau de bord personnel</p>
                 <div class="d-flex gap-3">
                     <a href="/patient/rendez-vous/nouveau" class="btn btn-light btn-sm quick-action-btn">
@@ -173,15 +173,20 @@
             </div>
         </div>
 
-        <!-- Rappels et alertes -->
-        <div class="reminder-card p-3 rounded-3 mb-4" th:if="${!rendezVousProchains.empty}">
+        <!-- Rappels et alertes pour les rendez-vous à venir -->
+        <div th:if="${!#lists.isEmpty(rendezVous) && rendezVous.size() > 0}" class="reminder-card p-3 rounded-3 mb-4">
             <div class="d-flex align-items-center">
                 <i class="bi bi-bell-fill me-2 text-warning"></i>
                 <span>Rappel: Vous avez un rendez-vous
-                       <span th:text="${#temporals.format(rendezVousProchains[0].dateHeure, 'dd MMMM')}"></span>
-                       à <span th:text="${#temporals.format(rendezVousProchains[0].dateHeure, 'HH:mm')}"></span>
-                       avec le Dr <span th:text="${rendezVousProchains[0].medecin.nom}"></span>
-                   </span>
+                    <span th:with="rdv=${rendezVous[0]}"
+                          th:text="${#temporals.format(rdv.dateHeure, 'dd MMMM')}">date</span>
+                    à
+                    <span th:with="rdv=${rendezVous[0]}"
+                          th:text="${#temporals.format(rdv.dateHeure, 'HH:mm')}">heure</span>
+                    avec le Dr
+                    <span th:with="rdv=${rendezVous[0]}"
+                          th:text="${rdv.medecin.nom}">nom du médecin</span>
+                </span>
             </div>
         </div>
 
@@ -194,7 +199,7 @@
                         <i class="bi bi-heart-pulse"></i>
                     </div>
                     <h5 class="mb-3">Pression artérielle</h5>
-                    <div class="vital-value" th:text="${patient.derniereStat?.tensionArt ?: '120/80'}"></div>
+                    <div class="vital-value">120/80</div>
                     <p class="vital-label mb-2">mmHg</p>
                     <div class="progress">
                         <div class="progress-bar bg-primary" role="progressbar" style="width: 85%" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100"></div>
@@ -207,7 +212,7 @@
                         <i class="bi bi-activity"></i>
                     </div>
                     <h5 class="mb-3">Rythme cardiaque</h5>
-                    <div class="vital-value" th:text="${patient.derniereStat?.pouls ?: '72'}"></div>
+                    <div class="vital-value">72</div>
                     <p class="vital-label mb-2">BPM</p>
                     <div class="progress">
                         <div class="progress-bar bg-success" role="progressbar" style="width: 75%" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
@@ -220,7 +225,7 @@
                         <i class="bi bi-lungs"></i>
                     </div>
                     <h5 class="mb-3">Saturation O₂</h5>
-                    <div class="vital-value" th:text="${patient.derniereStat?.saturationO2 ?: '98'}"></div>
+                    <div class="vital-value">98</div>
                     <p class="vital-label mb-2">%</p>
                     <div class="progress">
                         <div class="progress-bar bg-warning" role="progressbar" style="width: 98%" aria-valuenow="98" aria-valuemin="0" aria-valuemax="100"></div>
@@ -233,7 +238,7 @@
                         <i class="bi bi-droplet"></i>
                     </div>
                     <h5 class="mb-3">Glycémie</h5>
-                    <div class="vital-value" th:text="${patient.derniereStat?.glycemie ?: '5.4'}"></div>
+                    <div class="vital-value">5.4</div>
                     <p class="vital-label mb-2">mmol/L</p>
                     <div class="progress">
                         <div class="progress-bar bg-info" role="progressbar" style="width: 65%" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100"></div>
@@ -245,11 +250,14 @@
         <!-- Prochains rendez-vous -->
         <h3 class="section-title">Prochains rendez-vous</h3>
         <div class="row g-4 mb-5">
-            <div class="col-md-6" th:each="rdv : ${rendezVousProchains}">
+            <!-- Liste des rendez-vous à venir -->
+            <div th:each="rdv : ${rendezVous}" class="col-md-6"
+                 th:if="${rdv.dateHeure.isAfter(T(java.time.LocalDateTime).now()) &&
+                           rdv.statut != T(org.mql.hospital.entities.RendezVous.StatutRendezVous).ANNULE}">
                 <div class="appointment-card bg-white p-4">
                     <div class="d-flex justify-content-between align-items-start mb-3">
                         <div>
-                            <h5 class="mb-1" th:text="${rdv.type}">Consultation générale</h5>
+                            <h5 class="mb-1" th:text="${rdv.motif ?: 'Consultation'}">Consultation générale</h5>
                             <p class="appointment-date mb-0">
                                 <i class="bi bi-calendar3 me-1"></i>
                                 <span th:text="${#temporals.format(rdv.dateHeure, 'EEEE dd MMMM yyyy')}"></span>
@@ -258,11 +266,13 @@
                         <span class="badge badge-time px-3 py-2">
                                <i class="bi bi-clock me-1"></i>
                                <span th:text="${#temporals.format(rdv.dateHeure, 'HH:mm')}"></span>
-                           </span>
+                        </span>
                     </div>
                     <div class="d-flex align-items-center mb-3">
                         <div class="me-3">
-                            <img th:src="${rdv.medecin.photoUrl ?: '/images/doctor-avatar.png'}" alt="Photo médecin" class="rounded-circle" width="50" height="50">
+                            <div class="rounded-circle bg-light d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                <i class="bi bi-person-circle fs-3"></i>
+                            </div>
                         </div>
                         <div>
                             <h6 class="mb-0" th:text="'Dr. ' + ${rdv.medecin.prenom + ' ' + rdv.medecin.nom}"></h6>
@@ -270,19 +280,22 @@
                         </div>
                     </div>
                     <div class="d-flex gap-2">
-                        <a th:href="@{/patient/rendez-vous/{id}(id=${rdv.id})}" class="btn btn-sm btn-outline-primary">
+                        <a th:href="@{/rendezvous/{id}(id=${rdv.id})}" class="btn btn-sm btn-outline-primary">
                             <i class="bi bi-info-circle me-1"></i>Détails
                         </a>
-                        <a th:href="@{/patient/rendez-vous/{id}/modifier(id=${rdv.id})}" class="btn btn-sm btn-outline-secondary">
+                        <a th:href="@{/rendezvous/edit/{id}(id=${rdv.id})}" class="btn btn-sm btn-outline-secondary">
                             <i class="bi bi-pencil me-1"></i>Modifier
                         </a>
-                        <a th:href="@{/patient/rendez-vous/{id}/annuler(id=${rdv.id})}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Êtes-vous sûr de vouloir annuler ce rendez-vous?')">
+                        <a th:href="@{/rendezvous/delete/{id}(id=${rdv.id})}" class="btn btn-sm btn-outline-danger"
+                           onclick="return confirm('Êtes-vous sûr de vouloir annuler ce rendez-vous?')">
                             <i class="bi bi-x-circle me-1"></i>Annuler
                         </a>
                     </div>
                 </div>
             </div>
-            <div class="col-12" th:if="${rendezVousProchains.empty}">
+
+            <!-- Message si aucun rendez-vous -->
+            <div class="col-12" th:if="${#lists.isEmpty(rendezVous)}">
                 <div class="text-center p-4 bg-light rounded-3">
                     <i class="bi bi-calendar-x d-block mb-3" style="font-size: 2rem;"></i>
                     <h5>Vous n'avez pas de rendez-vous à venir</h5>
@@ -294,37 +307,45 @@
             </div>
         </div>
 
-        <!-- Traitements en cours -->
+        <!-- Traitements en cours (prescriptions actives) -->
         <h3 class="section-title">Traitements en cours</h3>
         <div class="row g-4">
-            <div class="col-md-4" th:each="traitement : ${traitements}">
-                <div class="medication-card bg-white p-4">
-                    <h5 class="mb-2" th:text="${traitement.medicament.nom}">Paracétamol</h5>
-                    <p class="text-muted mb-3" th:text="${traitement.medicament.description}">Analgésique et antipyrétique</p>
-                    <div class="medication-info mb-3">
-                        <div class="d-flex justify-content-between mb-2">
-                            <span>Posologie:</span>
-                            <span class="fw-bold" th:text="${traitement.posologie}">1000mg</span>
+            <!-- Liste des traitements issus des prescriptions actives -->
+            <div th:if="${!#lists.isEmpty(prescriptions)}">
+                <div th:each="prescription : ${prescriptions}" class="row g-4"
+                     th:if="${prescription.statut == T(org.mql.hospital.entities.Prescription.StatutPrescription).ACTIVE && prescription.lignePrescriptions != null}">
+                    <div th:each="ligne : ${prescription.lignePrescriptions}" class="col-md-4">
+                        <div class="medication-card bg-white p-4">
+                            <h5 class="mb-2" th:text="${ligne.medicament.nom}">Paracétamol</h5>
+                            <p class="text-muted mb-3" th:text="${ligne.medicament.dci}">Analgésique et antipyrétique</p>
+                            <div class="medication-info mb-3">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Posologie:</span>
+                                    <span class="fw-bold" th:text="${ligne.posologie}">1000mg</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Durée:</span>
+                                    <span class="fw-bold" th:text="${ligne.dureeTraitement + ' jours'}">5 jours</span>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <span>Instructions:</span>
+                                    <span class="fw-bold" th:text="${ligne.instructions ?: 'Selon prescription'}">Instructions</span>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <span class="dosage-badge bg-primary bg-opacity-10 text-primary me-2"
+                                          th:text="${ligne.momentPrise}">Moment de prise</span>
+                                </div>
+                                <a th:href="@{/prescriptions/{id}(id=${prescription.id})}" class="btn btn-sm btn-link">Plus de détails</a>
+                            </div>
                         </div>
-                        <div class="d-flex justify-content-between mb-2">
-                            <span>Fréquence:</span>
-                            <span class="fw-bold" th:text="${traitement.frequence}">3 fois par jour</span>
-                        </div>
-                        <div class="d-flex justify-content-between">
-                            <span>Durée:</span>
-                            <span class="fw-bold" th:text="${traitement.duree + ' jours'}">5 jours</span>
-                        </div>
-                    </div>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <span class="dosage-badge bg-primary bg-opacity-10 text-primary me-2" th:text="${traitement.voieAdministration}">Orale</span>
-                            <span class="dosage-badge bg-info bg-opacity-10 text-info" th:if="${traitement.avecRepas}">Avec repas</span>
-                        </div>
-                        <a th:href="@{/patient/traitement/{id}(id=${traitement.id})}" class="btn btn-sm btn-link">Plus de détails</a>
                     </div>
                 </div>
             </div>
-            <div class="col-12" th:if="${traitements.empty}">
+
+            <!-- Message si aucun traitement -->
+            <div class="col-12" th:if="${#lists.isEmpty(prescriptions)}">
                 <div class="text-center p-4 bg-light rounded-3">
                     <i class="bi bi-capsule d-block mb-3" style="font-size: 2rem;"></i>
                     <h5>Aucun traitement en cours</h5>

@@ -18,7 +18,7 @@ import java.util.Map;
  * Contrôleur pour le tableau de bord et les statistiques.
  */
 @Controller
-@RequestMapping("/dashboard")
+@RequestMapping("/main-dashboard") // Changez l'URL à /main-dashboard
 @AllArgsConstructor
 @Slf4j
 public class DashboardController {
@@ -28,9 +28,6 @@ public class DashboardController {
 
     /**
      * Affiche la page du tableau de bord avec les statistiques.
-     *
-     * @param model Le modèle pour les données à envoyer à la vue
-     * @return Le nom de la vue à afficher
      */
     @GetMapping
     public String dashboard(Model model) {

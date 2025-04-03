@@ -5,6 +5,7 @@ import org.mql.hospital.repository.*;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
@@ -13,6 +14,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Set;
 
 @Configuration
 @AllArgsConstructor
@@ -25,13 +27,14 @@ public class DataInitializer {
     private  RendezVousRepository rendezVousRepository;
     private  PrescriptionRepository prescriptionRepository;
     private  LignePrescriptionRepository lignePrescriptionRepository;
-
+    private  RoleRepository roleRepository;
+    private UserRepository userRepository;
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
     private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     @Bean
     @Transactional
-    public CommandLineRunner initData() {
+    public CommandLineRunner initData(PasswordEncoder passwordEncoder) {
         return args -> {
             // Nettoyer la base de données
             lignePrescriptionRepository.deleteAll();
@@ -41,7 +44,10 @@ public class DataInitializer {
             medecinRepository.deleteAll();
             departementRepository.deleteAll();
             patientRepository.deleteAll();
-
+            // Initialiser les rôles
+            Role roleAdmin = createRole("ROLE_ADMIN", "Administrateur du système");
+            Role roleMedecin = createRole("ROLE_MEDECIN", "Médecin de l'hôpital");
+            Role rolePatient = createRole("ROLE_PATIENT", "Patient de l'hôpital");
             // Initialiser les départements
             Departement cardio = createDepartement("Cardiologie", "Département spécialisé dans les pathologies cardiaques", "Bâtiment A, 3ème étage", 30, true);
             Departement neuro = createDepartement("Neurologie", "Département spécialisé dans les pathologies du système nerveux", "Bâtiment B, 2ème étage", 25, true);
@@ -54,39 +60,41 @@ public class DataInitializer {
             Departement ophtalmo = createDepartement("Ophtalmologie", "Département spécialisé dans les pathologies oculaires", "Bâtiment D, 1er étage", 15, true);
             Departement urgences = createDepartement("Urgences", "Service d'accueil des urgences médicales", "Bâtiment A, Rez-de-chaussée", 50, true);
 
-            // Initialiser les patients
-            Patient patient1 = createPatient("Jean Dupont", "1975-05-15", true, 150);
-            Patient patient2 = createPatient("Marie Martin", "1980-12-10", false, 180);
-            Patient patient3 = createPatient("Pierre Leclerc", "1955-08-22", true, 110);
-            Patient patient4 = createPatient("Sophie Bernard", "1990-03-30", false, 200);
-            Patient patient5 = createPatient("Ahmed Alami", "1965-11-05", true, 125);
-            Patient patient6 = createPatient("Fatima Benani", "1988-07-17", false, 170);
-            Patient patient7 = createPatient("Robert Garcia", "1950-02-28", true, 105);
-            Patient patient8 = createPatient("Nadia Roux", "1972-09-14", true, 115);
-            Patient patient9 = createPatient("Laurent Petit", "1985-06-25", false, 190);
-            Patient patient10 = createPatient("Samira Haddad", "1978-04-03", true, 130);
-            Patient patient11 = createPatient("Julie Moreau", "1992-01-20", false, 175);
-            Patient patient12 = createPatient("Mohammed Idrissi", "1960-10-12", true, 120);
-            Patient patient13 = createPatient("Isabelle Simon", "1982-08-08", false, 185);
-            Patient patient14 = createPatient("Thomas Leroy", "1970-03-15", true, 135);
-            Patient patient15 = createPatient("Laila Amrani", "1995-07-30", false, 195);
+            // Initialiser les patients avec comptes utilisateurs
+            Patient patient1 = createPatient("Jean Dupont", "1975-05-15", true, 150, createUser("jdupont", "jean.dupont@example.com", passwordEncoder.encode("password"), rolePatient));
+            Patient patient2 = createPatient("Marie Martin", "1980-12-10", false, 180, createUser("mmartin", "marie.martin@example.com",  passwordEncoder.encode("password"), rolePatient));
+            Patient patient3 = createPatient("Pierre Leclerc", "1955-08-22", true, 110, createUser("pleclerc", "pierre.leclerc@example.com",  passwordEncoder.encode("password"), rolePatient));
+            Patient patient4 = createPatient("Sophie Bernard", "1990-03-30", false, 200, createUser("sbernard", "sophie.bernard@example.com",  passwordEncoder.encode("password"), rolePatient));
+            Patient patient5 = createPatient("Ahmed Alami", "1965-11-05", true, 125, createUser("aalami", "ahmed.alami@example.com",  passwordEncoder.encode("password"), rolePatient));
+            // Patients sans comptes utilisateurs (pour tester la création de comptes par l'admin)
+            Patient patient6 = createPatient("Fatima Benani", "1988-07-17", false, 170, null);
+            Patient patient7 = createPatient("Robert Garcia", "1950-02-28", true, 105, null);
+            Patient patient8 = createPatient("Nadia Roux", "1972-09-14", true, 115, null);
+            Patient patient9 = createPatient("Laurent Petit", "1985-06-25", false, 190, null);
+            Patient patient10 = createPatient("Samira Haddad", "1978-04-03", true, 130, null);
+            Patient patient11 = createPatient("Julie Moreau", "1992-01-20", false, 175, null);
+            Patient patient12 = createPatient("Mohammed Idrissi", "1960-10-12", true, 120, null);
+            Patient patient13 = createPatient("Isabelle Simon", "1982-08-08", false, 185, null);
+            Patient patient14 = createPatient("Thomas Leroy", "1970-03-15", true, 135, null);
+            Patient patient15 = createPatient("Laila Amrani", "1995-07-30", false, 195, null);
 
-            // Initialiser les médecins
-            Medecin medecin1 = createMedecin("Dubois", "Alexandre", "Cardiologie", "+33654872145", "a.dubois@hospital.org", "MED001", cardio, true);
-            Medecin medecin2 = createMedecin("Benkirane", "Samia", "Neurologie", "+33698541236", "s.benkirane@hospital.org", "MED002", neuro, true);
-            Medecin medecin3 = createMedecin("Martin", "François", "Pédiatrie", "+33612457896", "f.martin@hospital.org", "MED003", pediatrie, true);
-            Medecin medecin4 = createMedecin("Delarue", "Céline", "Orthopédie", "+33687459632", "c.delarue@hospital.org", "MED004", ortho, true);
-            Medecin medecin5 = createMedecin("El Fassi", "Karim", "Oncologie", "+33645781236", "k.elfassi@hospital.org", "MED005", onco, true);
-            Medecin medecin6 = createMedecin("Richard", "Sophie", "Pneumologie", "+33698754123", "s.richard@hospital.org", "MED006", pneumo, true);
-            Medecin medecin7 = createMedecin("Bouchard", "Antoine", "Psychiatrie", "+33654123698", "a.bouchard@hospital.org", "MED007", psy, true);
-            Medecin medecin8 = createMedecin("Ziani", "Leila", "Dermatologie", "+33612369874", "l.ziani@hospital.org", "MED008", dermato, true);
-            Medecin medecin9 = createMedecin("Dupuis", "Marc", "Ophtalmologie", "+33645781239", "m.dupuis@hospital.org", "MED009", ophtalmo, true);
-            Medecin medecin10 = createMedecin("Lemaire", "Hélène", "Neurologie", "+33654789632", "h.lemaire@hospital.org", "MED010", neuro, true);
-            Medecin medecin11 = createMedecin("Berrada", "Youssef", "Cardiologie", "+33612587496", "y.berrada@hospital.org", "MED011", cardio, true);
-            Medecin medecin12 = createMedecin("Fabre", "Isabelle", "Pédiatrie", "+33698523147", "i.fabre@hospital.org", "MED012", pediatrie, true);
-            Medecin medecin13 = createMedecin("Laval", "Philippe", "Urgences", "+33654789513", "p.laval@hospital.org", "MED013", urgences, true);
-            Medecin medecin14 = createMedecin("Moussaoui", "Amina", "Urgences", "+33612453698", "a.moussaoui@hospital.org", "MED014", urgences, true);
-            Medecin medecin15 = createMedecin("Girard", "Mathieu", "Orthopédie", "+33698514723", "m.girard@hospital.org", "MED015", ortho, false);
+            // Initialiser les médecins avec comptes utilisateurs
+            Medecin medecin1 = createMedecin("Dubois", "Alexandre", "Cardiologie", "+33654872145", "a.dubois@hospital.org", "MED001", cardio, true, createUser("adubois", "a.dubois@hospital.org", passwordEncoder.encode("password"), roleMedecin));
+            Medecin medecin2 = createMedecin("Benkirane", "Samia", "Neurologie", "+33698541236", "s.benkirane@hospital.org", "MED002", neuro, true, createUser("sbenkirane", "s.benkirane@hospital.org",passwordEncoder.encode("password"), roleMedecin));
+            // Médecins sans comptes utilisateurs (pour tester la création de comptes par l'admin)
+            Medecin medecin3 = createMedecin("Martin", "François", "Pédiatrie", "+33612457896", "f.martin@hospital.org", "MED003", pediatrie, true, null);
+            Medecin medecin4 = createMedecin("Delarue", "Céline", "Orthopédie", "+33687459632", "c.delarue@hospital.org", "MED004", ortho, true, null);
+            Medecin medecin5 = createMedecin("El Fassi", "Karim", "Oncologie", "+33645781236", "k.elfassi@hospital.org", "MED005", onco, true, null);
+            Medecin medecin6 = createMedecin("Richard", "Sophie", "Pneumologie", "+33698754123", "s.richard@hospital.org", "MED006", pneumo, true, null);
+            Medecin medecin7 = createMedecin("Bouchard", "Antoine", "Psychiatrie", "+33654123698", "a.bouchard@hospital.org", "MED007", psy, true, null);
+            Medecin medecin8 = createMedecin("Ziani", "Leila", "Dermatologie", "+33612369874", "l.ziani@hospital.org", "MED008", dermato, true, null);
+            Medecin medecin9 = createMedecin("Dupuis", "Marc", "Ophtalmologie", "+33645781239", "m.dupuis@hospital.org", "MED009", ophtalmo, true, null);
+            Medecin medecin10 = createMedecin("Lemaire", "Hélène", "Neurologie", "+33654789632", "h.lemaire@hospital.org", "MED010", neuro, true, null);
+            Medecin medecin11 = createMedecin("Berrada", "Youssef", "Cardiologie", "+33612587496", "y.berrada@hospital.org", "MED011", cardio, true, null);
+            Medecin medecin12 = createMedecin("Fabre", "Isabelle", "Pédiatrie", "+33698523147", "i.fabre@hospital.org", "MED012", pediatrie, true, null);
+            Medecin medecin13 = createMedecin("Laval", "Philippe", "Urgences", "+33654789513", "p.laval@hospital.org", "MED013", urgences, true, null);
+            Medecin medecin14 = createMedecin("Moussaoui", "Amina", "Urgences", "+33612453698", "a.moussaoui@hospital.org", "MED014", urgences, true, null);
+            Medecin medecin15 = createMedecin("Girard", "Mathieu", "Orthopédie", "+33698514723", "m.girard@hospital.org", "MED015", ortho, false, null);
 
             // Assigner les chefs de département
             assignChefDepartement(cardio, medecin1);
@@ -187,13 +195,14 @@ public class DataInitializer {
         return departementRepository.save(departement);
     }
 
-    private Patient createPatient(String nom, String dateNaissanceStr, boolean malade, int score) {
+    private Patient createPatient(String nom, String dateNaissanceStr, boolean malade, int score,User user) {
         try {
             Patient patient = new Patient();
             patient.setNom(nom);
             patient.setDateNaissance(dateFormat.parse(dateNaissanceStr));
             patient.setMalade(malade);
             patient.setScore(score);
+            patient.setUser(user);
             return patientRepository.save(patient);
         } catch (Exception e) {
             System.err.println("Error creating patient: " + e.getMessage());
@@ -202,7 +211,7 @@ public class DataInitializer {
     }
 
     private Medecin createMedecin(String nom, String prenom, String specialite, String telephone,
-                                  String email, String matricule, Departement departement, boolean disponible) {
+                                  String email, String matricule, Departement departement, boolean disponible,User user) {
         Medecin medecin = new Medecin();
         medecin.setNom(nom);
         medecin.setPrenom(prenom);
@@ -212,6 +221,7 @@ public class DataInitializer {
         medecin.setMatricule(matricule);
         medecin.setDepartement(departement);
         medecin.setDisponible(disponible);
+        medecin.setUser(user);
         return medecinRepository.save(medecin);
     }
 
@@ -294,5 +304,24 @@ public class DataInitializer {
         lignePrescription.setQuantite(quantite);
         lignePrescription.setSubstitutionAutorisee(substitutionAutorisee);
         return lignePrescriptionRepository.save(lignePrescription);
+    }
+    private Role createRole(String name, String description) {
+        Role role = new Role();
+        role.setName(name);
+        role.setDescription(description);
+        return roleRepository.save(role);
+    }
+    private User createUser(String username, String email, String password, Role role) {
+        User user = new User();
+        user.setUsername(username);
+        user.setEmail(email);
+        user.setPassword(password);
+        user.setActive(true);
+
+        Set<Role> roles = new HashSet<>();
+        roles.add(role);
+        user.setRoles(roles);
+
+        return userRepository.save(user);
     }
 }
