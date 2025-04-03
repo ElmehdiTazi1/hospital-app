@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="fr"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accès refusé - MediSys</title>
+    <link rel="stylesheet" href="/webjars/bootstrap/5.2.3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/webjars/bootstrap-icons/1.10.3/font/bootstrap-icons.css">
+    <style>
+        body {
+            background-color: #f5f7fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .error-container {
+            max-width: 600px;
+            width: 100%;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .card {
+            border: none;
+            border-radius: 1rem;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .card-header {
+            background-color: #dc3545;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .error-icon {
+            font-size: 4rem;
+            color: white;
+        }
+
+        .card-body {
+            padding: 3rem 2rem;
+        }
+
+        .btn-primary {
+            border-radius: 0.5rem;
+            padding: 0.7rem 1.5rem;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+<div class="error-container">
+    <div class="card">
+        <div class="card-header">
+            <div class="error-icon">
+                <i class="bi bi-shield-lock"></i>
+            </div>
+            <h2 class="text-white mb-0">Accès Refusé</h2>
+        </div>
+        <div class="card-body">
+            <h4 class="mb-4">Désolé, vous n'êtes pas autorisé à accéder à cette page.</h4>
+            <p class="mb-4">Vous ne disposez pas des autorisations nécessaires pour accéder à la ressource demandée. Si vous pensez qu'il s'agit d'une erreur, veuillez contacter l'administrateur.</p>
+
+            <div class="d-flex justify-content-center mt-4">
+                <a th:href="@{/dashboard}" class="btn btn-primary me-3">
+                    <i class="bi bi-house-door me-2"></i>Retour à l'accueil
+                </a>
+                <a th:href="@{/logout}" class="btn btn-outline-secondary">
+                    <i class="bi bi-box-arrow-right me-2"></i>Se déconnecter
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/webjars/jquery/3.6.4/jquery.min.js"></script>
+<script src="/webjars/bootstrap/5.2.3/js/bootstrap.bundle.js"></script>
+</body>
+</html>

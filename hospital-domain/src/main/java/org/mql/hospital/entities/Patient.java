@@ -56,6 +56,13 @@ public class Patient {
     private int score;
 
     /**
+     * Relation avec l'utilisateur correspondant (pour l'authentification)
+     */
+    @OneToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    /**
      * Calcule l'âge du patient basé sur sa date de naissance.
      *
      * @return L'âge du patient en années

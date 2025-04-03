@@ -85,4 +85,11 @@ public class Medecin {
      * Indique si le médecin est disponible (non suspendu, non en congé, etc.).
      */
     private boolean disponible = true;
+
+    /**
+     * Relation avec l'utilisateur correspondant (pour l'authentification)
+     */
+    @OneToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 }

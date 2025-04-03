@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="fr"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/medecin-layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Tableau de bord médecin - MediSys</title>
+    <style>
+        .welcome-card {
+            background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
+            border-radius: 1rem;
+            overflow: hidden;
+            color: white;
+            position: relative;
+        }
+
+        .welcome-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 300px;
+            height: 100%;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"><rect width="200" height="200" fill="none"/><path d="M168.7,50.8C159.3,41.5,143.5,41.5,134.1,50.8L68.3,116.6C58.9,125.9,58.9,141.7,68.3,151L134.1,216.8C143.5,226.1,159.3,226.1,168.7,216.8L234.5,151C243.9,141.7,243.9,125.9,234.5,116.6L168.7,50.8Z" fill="rgba(255,255,255,0.08)"/><path d="M134.1,50.8C124.7,41.5,108.9,41.5,99.5,50.8L33.7,116.6C24.4,125.9,24.4,141.7,33.7,151L99.5,216.8C108.9,226.1,124.7,226.1,134.1,216.8L199.9,151C209.3,141.7,209.3,125.9,199.9,116.6L134.1,50.8Z" fill="rgba(255,255,255,0.08)"/></svg>');
+            background-repeat: no-repeat;
+            background-position: right center;
+            opacity: 0.6;
+            z-index: 0;
+        }
+
+        .welcome-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .stats-card {
+            height: 100%;
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .stats-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .stats-icon {
+            font-size: 2.5rem;
+            margin-right: 1rem;
+        }
+
+        .stats-count {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 0;
+            line-height: 1;
+        }
+
+        .stats-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .appointment-card {
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+
+        .appointment-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+
+        .appointment-time {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .patient-avatar {
+            width: 3rem;
+            height: 3rem;
+            border-radius: 50%;
+            background-color: #e9ecef;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: #6c757d;
+        }
+
+        .section-title {
+            position: relative;
+            margin-bottom: 2rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -10px;
+            width: 60px;
+            height: 4px;
+            background-color: var(--primary-color);
+            border-radius: 2px;
+        }
+
+        .quick-action {
+            border-radius: 1rem;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            background-color: #fff;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            height: 100%;
+        }
+
+        .quick-action:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+        }
+
+        .quick-action-icon {
+            font-size: 2rem;
+            color: var(--primary-color);
+            transition: all 0.3s ease;
+        }
+
+        .quick-action:hover .quick-action-icon {
+            transform: scale(1.2);
+        }
+    </style>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="container-fluid py-4 px-4">
+        <!-- Carte de bienvenue -->
+        <div class="card welcome-card mb-4">
+            <div class="card-body welcome-content p-4">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h2 class="mb-3">Bienvenue, Dr. <span th:text="${medecin.prenom + ' ' + medecin.nom}">John Doe</span></h2>
+                        <p class="mb-1">Spécialité: <span class="fw-bold" th:text="${medecin.specialite}">Cardiologie</span></p>
+                        <p class="mb-1">Département: <span class="fw-bold" th:text="${medecin.departement != null ? medecin.departement.nom : 'Non assigné'}">Cardiologie</span></p>
+                        <p class="mb-0">Statut:
+                            <span th:if="${medecin.disponible}" class="badge bg-light text-primary">Disponible</span>
+                            <span th:unless="${medecin.disponible}" class="badge bg-light text-danger">Indisponible</span>
+                        </p>
+                        <div class="mt-4">
+                            <a th:href="@{/medecin/planning}" class="btn btn-light me-2">
+                                <i class="bi bi-calendar-week me-2"></i>Voir mon planning
+                            </a>
+                            <a th:href="@{/medecin/profile}" class="btn btn-outline-light">
+                                <i class="bi bi-person-gear me-2"></i>Mon profil
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-md-4 d-none d-md-block text-center">
+                        <i class="bi bi-person-badge text-white" style="font-size: 8rem; opacity: 0.5;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistiques -->
+        <div class="row mb-4">
+            <div class="col-md-4 mb-4">
+                <div class="stats-card bg-white p-4">
+                    <div class="d-flex align-items-center">
+                        <div class="stats-icon text-primary">
+                            <i class="bi bi-calendar-check"></i>
+                        </div>
+                        <div>
+                            <p class="stats-count text-primary" th:text="${rendezVousAVenir}">12</p>
+                            <p class="stats-label">Rendez-vous à venir</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="stats-card bg-white p-4">
+                    <div class="d-flex align-items-center">
+                        <div class="stats-icon text-success">
+                            <i class="bi bi-calendar-week"></i>
+                        </div>
+                        <div>
+                            <p class="stats-count text-success" th:text="${rendezVousDuJour.size()}">3</p>
+                            <p class="stats-label">Rendez-vous aujourd'hui</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="stats-card bg-white p-4">
+                    <div class="d-flex align-items-center">
+                        <div class="stats-icon text-info">
+                            <i class="bi bi-people"></i>
+                        </div>
+                        <div>
+                            <p class="stats-count text-info" th:text="${patientsConsultes}">45</p>
+                            <p class="stats-label">Patients suivis</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rendez-vous du jour -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <h3 class="section-title">Rendez-vous d'aujourd'hui</h3>
+            </div>
+
+            <!-- Si pas de rendez-vous aujourd'hui -->
+            <div class="col-12" th:if="${rendezVousDuJour.isEmpty()}">
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle me-2"></i>
+                    Vous n'avez pas de rendez-vous programmés pour aujourd'hui.
+                </div>
+            </div>
+
+            <!-- Liste des rendez-vous du jour -->
+            <div th:each="rdv : ${rendezVousDuJour}" class="col-md-6 col-lg-4 mb-3">
+                <div class="appointment-card card h-100">
+                    <div class="card-header d-flex justify-content-between align-items-center"
+                         th:classappend="${rdv.statut == T(org.mql.hospital.entities.RendezVous.StatutRendezVous).PLANIFIE ? 'bg-info text-white' :
+                                         (rdv.statut == T(org.mql.hospital.entities.RendezVous.StatutRendezVous).CONFIRME ? 'bg-success text-white' :
+                                         (rdv.statut == T(org.mql.hospital.entities.RendezVous.StatutRendezVous).ANNULE ? 'bg-danger text-white' : 'bg-secondary text-white'))}">
+                        <span class="appointment-time" th:text="${#temporals.format(rdv.dateHeure, 'HH:mm')}">10:30</span>
+                        <span class="badge bg-light text-dark" th:text="${rdv.duree + ' min'}">30 min</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="patient-avatar me-3">
+                                <i class="bi bi-person"></i>
+                            </div>
+                            <div>
+                                <h5 class="card-title mb-0" th:text="${rdv.patient.nom}">Jean Dupont</h5>
+                                <p class="card-text text-muted">
+                                    <small th:if="${rdv.patient.getAge() > 0}" th:text="${rdv.patient.getAge() + ' ans'}">45 ans</small>
+                                </p>
+                            </div>
+                        </div>
+                        <p class="card-text" th:if="${rdv.motif != null}" th:text="${rdv.motif}">Consultation de suivi</p>
+                        <div class="d-flex justify-content-between align-items-center mt-4">
+                            <a th:href="@{'/medecin/patients/' + ${rdv.patient.id}}" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-person-vcard me-2"></i>Dossier patient
+                            </a>
+                            <a th:href="@{'/rendezvous/' + ${rdv.id}}" class="btn btn-sm btn-primary">
+                                <i class="bi bi-eye me-2"></i>Détails
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Actions rapides -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <h3 class="section-title">Actions rapides</h3>
+            </div>
+
+            <div class="col-6 col-md-3 mb-3">
+                <a th:href="@{/medecin/planning}" class="quick-action d-flex flex-column align-items-center p-3 h-100 text-decoration-none">
+                    <i class="bi bi-calendar-week quick-action-icon mb-3 text-primary"></i>
+                    <span class="text-dark">Mon planning</span>
+                </a>
+            </div>
+
+            <div class="col-6 col-md-3 mb-3">
+                <a th:href="@{/rendezvous/nouveau}" class="quick-action d-flex flex-column align-items-center p-3 h-100 text-decoration-none">
+                    <i class="bi bi-calendar-plus quick-action-icon mb-3 text-success"></i>
+                    <span class="text-dark">Nouveau rendez-vous</span>
+                </a>
+            </div>
+
+            <div class="col-6 col-md-3 mb-3">
+                <a th:href="@{/prescriptions/nouvelle}" class="quick-action d-flex flex-column align-items-center p-3 h-100 text-decoration-none">
+                    <i class="bi bi-file-earmark-plus quick-action-icon mb-3 text-warning"></i>
+                    <span class="text-dark">Nouvelle prescription</span>
+                </a>
+            </div>
+
+            <div class="col-6 col-md-3 mb-3">
+                <a th:href="@{/index}" class="quick-action d-flex flex-column align-items-center p-3 h-100 text-decoration-none">
+                    <i class="bi bi-people quick-action-icon mb-3 text-info"></i>
+                    <span class="text-dark">Liste des patients</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

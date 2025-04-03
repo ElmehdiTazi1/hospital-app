@@ -1,192 +1,175 @@
 package org.mql.hospital.web.controllers;
 
-import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.mql.hospital.entities.Departement;
 import org.mql.hospital.entities.Medecin;
-import org.mql.hospital.service.DepartementService;
+import org.mql.hospital.entities.Patient;
+import org.mql.hospital.entities.RendezVous;
+import org.mql.hospital.entities.User;
 import org.mql.hospital.service.MedecinService;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.mql.hospital.service.RendezVousService;
+import org.mql.hospital.service.UserService;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
 
 /**
- * Contrôleur responsable de la gestion des médecins via l'interface web.
+ * Contrôleur pour gérer les fonctionnalités spécifiques aux médecins.
  */
 @Controller
-@RequestMapping("/medecins")
-@AllArgsConstructor
+@RequestMapping("/medecin")
+@PreAuthorize("hasRole('MEDECIN')")
+@RequiredArgsConstructor
 @Slf4j
 public class MedecinController {
 
     private final MedecinService medecinService;
-    private final DepartementService departementService;
+    private final RendezVousService rendezVousService;
+    private final UserService userService;
 
     /**
-     * Affiche la liste des médecins avec pagination et filtrage.
-     *
-     * @param model Le modèle pour les données à envoyer à la vue
-     * @param page Numéro de page (0-indexed)
-     * @param size Taille de la page
-     * @param keyword Mot-clé de recherche
-     * @return Le nom de la vue à afficher
+     * Affiche le tableau de bord du médecin.
      */
-    @GetMapping
-    public String listMedecins(Model model,
-                               @RequestParam(name = "page", defaultValue = "0") int page,
-                               @RequestParam(name = "size", defaultValue = "5") int size,
-                               @RequestParam(name = "keyword", defaultValue = "") String keyword) {
+    @GetMapping("/dashboard")
+    public String medecinDashboard(Model model) {
+        log.info("Affichage du tableau de bord médecin");
 
-        Page<Medecin> pageMedecins = medecinService.findByNomContains(keyword, PageRequest.of(page, size));
-
-        model.addAttribute("listMedecins", pageMedecins.getContent());
-        model.addAttribute("pages", new int[pageMedecins.getTotalPages()]);
-        model.addAttribute("currentPage", page);
-        model.addAttribute("keyword", keyword);
-
-        return "medecins/list";
-    }
-
-    /**
-     * Affiche le formulaire d'ajout d'un nouveau médecin.
-     *
-     * @param model Le modèle pour les données à envoyer à la vue
-     * @return Le nom de la vue du formulaire
-     */
-    @GetMapping("/nouveau")
-    public String showAddForm(Model model) {
-        List<Departement> departements = departementService.findActiveDepartements();
-
-        model.addAttribute("medecin", new Medecin());
-        model.addAttribute("departements", departements);
-        model.addAttribute("title", "Ajouter un médecin");
-        model.addAttribute("isEdit", false);
-
-        return "medecins/form";
-    }
-
-    /**
-     * Affiche le formulaire d'édition d'un médecin existant.
-     *
-     * @param id L'identifiant du médecin à éditer
-     * @param model Le modèle pour les données à envoyer à la vue
-     * @return Le nom de la vue du formulaire ou redirection si le médecin n'existe pas
-     */
-    @GetMapping("/edit/{id}")
-    public String showEditForm(@PathVariable Long id, Model model) {
-        Medecin medecin = medecinService.getMedecinById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Médecin invalide avec l'ID: " + id));
-
-        List<Departement> departements = departementService.findActiveDepartements();
-
-        model.addAttribute("medecin", medecin);
-        model.addAttribute("departements", departements);
-        model.addAttribute("title", "Modifier le médecin");
-        model.addAttribute("isEdit", true);
-
-        return "medecins/form";
-    }
-
-    /**
-     * Traite la soumission du formulaire d'ajout ou d'édition d'un médecin.
-     *
-     * @param medecin Le médecin à sauvegarder
-     * @param bindingResult Résultats de la validation du formulaire
-     * @param departementId ID du département sélectionné
-     * @return Redirection vers la liste des médecins ou retour au formulaire en cas d'erreur
-     */
-    @PostMapping("/save")
-    public String saveMedecin(@Valid Medecin medecin,
-                              BindingResult bindingResult,
-                              @RequestParam(required = false) Long departementId,
-                              Model model) {
-
-        if (bindingResult.hasErrors()) {
-            List<Departement> departements = departementService.findActiveDepartements();
-            model.addAttribute("departements", departements);
-            model.addAttribute("title", medecin.getId() == null ? "Ajouter un médecin" : "Modifier le médecin");
-            model.addAttribute("isEdit", medecin.getId() != null);
-            return "medecins/form";
+        // Récupérer le médecin connecté
+        Medecin medecin = getCurrentMedecin();
+        if (medecin == null) {
+            return "redirect:/logout"; // Redirection vers la déconnexion si le médecin n'est pas trouvé
         }
 
-        // Associer le département sélectionné
-        if (departementId != null) {
-            departementService.getDepartementById(departementId).ifPresent(medecin::setDepartement);
+        // Données du médecin
+        model.addAttribute("medecin", medecin);
+
+        // Rendez-vous du jour
+        List<RendezVous> rendezVousDuJour = getRendezVousDuJour(medecin);
+        model.addAttribute("rendezVousDuJour", rendezVousDuJour);
+
+        // Statistiques du médecin
+        long rendezVousAVenir = getRendezVousAVenir(medecin);
+        model.addAttribute("rendezVousAVenir", rendezVousAVenir);
+
+        // Nombre de patients différents consultés
+        long patientsConsultesCount = getPatientsConsultes(medecin);
+        model.addAttribute("patientsConsultes", patientsConsultesCount);
+
+        return "medecins/dashboard";
+    }
+
+    /**
+     * Affiche le planning des rendez-vous du médecin.
+     */
+    @GetMapping("/planning")
+    public String medecinPlanning(Model model) {
+        // Récupérer le médecin connecté
+        Medecin medecin = getCurrentMedecin();
+        if (medecin == null) {
+            return "redirect:/logout";
         }
 
-        medecinService.saveMedecin(medecin);
-        return "redirect:/medecins?keyword=" + medecin.getNom();
+        // Récupérer tous les rendez-vous du médecin
+        List<RendezVous> rendezVous = rendezVousService.findByMedecin(medecin.getId());
+        model.addAttribute("rendezVous", rendezVous);
+        model.addAttribute("medecin", medecin);
+
+        return "medecin/planning";
     }
 
     /**
-     * Supprime un médecin.
-     *
-     * @param id L'identifiant du médecin à supprimer
-     * @param keyword Mot-clé de recherche pour la redirection
-     * @param page Page actuelle pour la redirection
-     * @return Redirection vers la liste des médecins
+     * Affiche les détails d'un patient pour le médecin.
      */
-    @GetMapping("/delete/{id}")
-    public String deleteMedecin(@PathVariable Long id,
-                                @RequestParam(name = "keyword", defaultValue = "") String keyword,
-                                @RequestParam(name = "page", defaultValue = "0") int page) {
+    @GetMapping("/patients/{id}")
+    public String patientDetails(@PathVariable Long id, Model model) {
+        // Récupérer le médecin connecté
+        Medecin medecin = getCurrentMedecin();
+        if (medecin == null) {
+            return "redirect:/logout";
+        }
 
-        medecinService.deleteMedecin(id);
-        return "redirect:/medecins?page=" + page + "&keyword=" + keyword;
+        // Recherche des rendez-vous du médecin avec ce patient
+        // Logique pour récupérer les détails du patient et les rendez-vous associés
+
+        return "medecin/patient-details";
     }
 
     /**
-     * Affiche les détails d'un médecin.
-     *
-     * @param id L'identifiant du médecin
-     * @param model Le modèle pour les données à envoyer à la vue
-     * @return La vue des détails du médecin
+     * Affiche le profil du médecin.
      */
-    @GetMapping("/{id}")
-    public String showMedecinDetails(@PathVariable Long id, Model model) {
-        Medecin medecin = medecinService.getMedecinById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Médecin invalide avec l'ID: " + id));
+    @GetMapping("/profile")
+    public String medecinProfile(Model model) {
+        // Récupérer le médecin connecté
+        Medecin medecin = getCurrentMedecin();
+        if (medecin == null) {
+            return "redirect:/logout";
+        }
 
         model.addAttribute("medecin", medecin);
-        return "medecins/details";
+        return "medecin/profile";
     }
 
     /**
-     * Change le statut de disponibilité d'un médecin.
-     *
-     * @param id L'identifiant du médecin
-     * @param disponible Nouveau statut de disponibilité
-     * @return Redirection vers les détails du médecin
+     * Récupère le médecin actuellement connecté.
      */
-    @PostMapping("/{id}/disponibilite")
-    public String toggleDisponibilite(@PathVariable Long id, @RequestParam boolean disponible) {
-        Medecin medecin = medecinService.getMedecinById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Médecin invalide avec l'ID: " + id));
+    private Medecin getCurrentMedecin() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.isAuthenticated()) {
+            String username = auth.getName();
+            Optional<User> user = userService.getUserByUsername(username);
 
-        medecin.setDisponible(disponible);
-        medecinService.saveMedecin(medecin);
-
-        return "redirect:/medecins/" + id;
+            if (user.isPresent() && user.get().getMedecin() != null) {
+                return user.get().getMedecin();
+            }
+        }
+        return null;
     }
 
     /**
-     * Assigne un médecin comme chef de département.
-     *
-     * @param medecinId L'identifiant du médecin
-     * @param departementId L'identifiant du département
-     * @return Redirection vers les détails du médecin
+     * Récupère les rendez-vous du jour pour un médecin.
      */
-    @PostMapping("/{medecinId}/chef-departement")
-    public String assignerChefDepartement(@PathVariable Long medecinId,
-                                          @RequestParam Long departementId) {
+    private List<RendezVous> getRendezVousDuJour(Medecin medecin) {
+        LocalDateTime debutJour = LocalDate.now().atStartOfDay();
+        LocalDateTime finJour = LocalDate.now().atTime(LocalTime.MAX);
 
-        medecinService.setChefDepartement(medecinId, departementId);
-        return "redirect:/medecins/" + medecinId;
+        return rendezVousService.findByMedecinAndPeriode(medecin.getId(), debutJour, finJour);
+    }
+
+    /**
+     * Récupère le nombre de rendez-vous à venir pour un médecin.
+     */
+    private long getRendezVousAVenir(Medecin medecin) {
+        LocalDateTime maintenant = LocalDateTime.now();
+        List<RendezVous> rendezVous = rendezVousService.findByMedecin(medecin.getId());
+
+        return rendezVous.stream()
+                .filter(rdv -> rdv.getDateHeure().isAfter(maintenant)
+                        && rdv.getStatut() != RendezVous.StatutRendezVous.ANNULE)
+                .count();
+    }
+
+    /**
+     * Récupère le nombre de patients différents consultés par un médecin.
+     */
+    private long getPatientsConsultes(Medecin medecin) {
+        List<RendezVous> rendezVous = rendezVousService.findByMedecin(medecin.getId());
+
+        return rendezVous.stream()
+                .filter(rdv -> rdv.getStatut() == RendezVous.StatutRendezVous.TERMINE)
+                .map(RendezVous::getPatient)
+                .map(Patient::getId)
+                .distinct()
+                .count();
     }
 }

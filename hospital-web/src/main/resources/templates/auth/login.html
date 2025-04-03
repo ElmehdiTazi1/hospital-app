@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="fr"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion - MediSys</title>
+    <link rel="stylesheet" href="/webjars/bootstrap/5.2.3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/webjars/bootstrap-icons/1.10.3/font/bootstrap-icons.css">
+    <style>
+        body {
+            background-color: #f5f7fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-container {
+            max-width: 450px;
+            width: 100%;
+            padding: 15px;
+        }
+
+        .card {
+            border: none;
+            border-radius: 1rem;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .card-header {
+            background-color: #0d6efd;
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .card-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 10px;
+            background: linear-gradient(135deg, #0d6efd 25%, transparent 25%) -10px 0,
+            linear-gradient(225deg, #0d6efd 25%, transparent 25%) -10px 0,
+            linear-gradient(315deg, #0d6efd 25%, transparent 25%),
+            linear-gradient(45deg, #0d6efd 25%, transparent 25%);
+            background-size: 20px 20px;
+            background-color: white;
+        }
+
+        .logo {
+            color: white;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-body {
+            padding: 2.5rem 2rem;
+        }
+
+        .form-control {
+            border-radius: 0.5rem;
+            padding: 0.7rem 1rem;
+            margin-bottom: 1rem;
+            border: 1px solid #dee2e6;
+        }
+
+        .form-control:focus {
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+        }
+
+        .btn-primary {
+            border-radius: 0.5rem;
+            padding: 0.7rem 1rem;
+            font-weight: 500;
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+            width: 100%;
+        }
+
+        .alert {
+            border-radius: 0.5rem;
+            padding: 1rem;
+        }
+
+        .form-check-input:checked {
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+        }
+
+        .extra-options {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+        }
+
+        .register-link {
+            margin-top: 1.5rem;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<div class="login-container">
+    <div class="card">
+        <div class="card-header">
+            <div class="text-center logo">
+                <i class="bi bi-hospital"></i>
+            </div>
+            <h3 class="text-white mb-0">MediSys</h3>
+        </div>
+        <div class="card-body">
+            <h4 class="text-center mb-4">Connexion</h4>
+
+            <!-- Messages d'erreur ou de succès -->
+            <div th:if="${param.error}" class="alert alert-danger">
+                <i class="bi bi-exclamation-circle me-2"></i>
+                Nom d'utilisateur ou mot de passe incorrect.
+            </div>
+            <div th:if="${param.logout}" class="alert alert-success">
+                <i class="bi bi-check-circle me-2"></i>
+                Vous avez été déconnecté avec succès.
+            </div>
+            <div th:if="${successMessage}" class="alert alert-success">
+                <i class="bi bi-check-circle me-2"></i>
+                <span th:text="${successMessage}">Message de succès</span>
+            </div>
+            <div th:if="${errorMessage}" class="alert alert-danger">
+                <i class="bi bi-exclamation-circle me-2"></i>
+                <span th:text="${errorMessage}">Message d'erreur</span>
+            </div>
+
+            <!-- Formulaire de connexion -->
+            <form th:action="@{/login}" method="post">
+                <div class="mb-3">
+                    <label for="username" class="form-label">Nom d'utilisateur</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-person"></i></span>
+                        <input type="text" id="username" name="username" class="form-control" placeholder="Votre nom d'utilisateur" required>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Mot de passe</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                        <input type="password" id="password" name="password" class="form-control" placeholder="Votre mot de passe" required>
+                    </div>
+                </div>
+                <div class="extra-options">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="remember-me" name="remember-me">
+                        <label class="form-check-label" for="remember-me">Se souvenir de moi</label>
+                    </div>
+                    <a href="/forgot-password" class="text-decoration-none">Mot de passe oublié?</a>
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-box-arrow-in-right me-2"></i>Se connecter
+                </button>
+            </form>
+
+            <div class="register-link">
+                <p>Vous êtes un patient et n'avez pas de compte? <a th:href="@{/register}" class="text-decoration-none">S'inscrire</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/webjars/jquery/3.6.4/jquery.min.js"></script>
+<script src="/webjars/bootstrap/5.2.3/js/bootstrap.bundle.js"></script>
+</body>
+</html>

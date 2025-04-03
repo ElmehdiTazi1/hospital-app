@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="fr"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscription - MediSys</title>
+    <link rel="stylesheet" href="/webjars/bootstrap/5.2.3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/webjars/bootstrap-icons/1.10.3/font/bootstrap-icons.css">
+    <style>
+        body {
+            background-color: #f5f7fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            padding: 40px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .register-container {
+            max-width: 550px;
+            width: 100%;
+            padding: 15px;
+        }
+
+        .card {
+            border: none;
+            border-radius: 1rem;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .card-header {
+            background-color: #0d6efd;
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .card-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 10px;
+            background: linear-gradient(135deg, #0d6efd 25%, transparent 25%) -10px 0,
+            linear-gradient(225deg, #0d6efd 25%, transparent 25%) -10px 0,
+            linear-gradient(315deg, #0d6efd 25%, transparent 25%),
+            linear-gradient(45deg, #0d6efd 25%, transparent 25%);
+            background-size: 20px 20px;
+            background-color: white;
+        }
+
+        .logo {
+            color: white;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-body {
+            padding: 2.5rem 2rem;
+        }
+
+        .form-control {
+            border-radius: 0.5rem;
+            padding: 0.7rem 1rem;
+            margin-bottom: 1rem;
+            border: 1px solid #dee2e6;
+        }
+
+        .form-control:focus {
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+        }
+
+        .btn-primary {
+            border-radius: 0.5rem;
+            padding: 0.7rem 1rem;
+            font-weight: 500;
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+            width: 100%;
+        }
+
+        .alert {
+            border-radius: 0.5rem;
+            padding: 1rem;
+        }
+
+        .login-link {
+            margin-top: 1.5rem;
+            text-align: center;
+        }
+
+        .text-danger {
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+    </style>
+</head>
+<body>
+<div class="register-container">
+    <div class="card">
+        <div class="card-header">
+            <div class="text-center logo">
+                <i class="bi bi-hospital"></i>
+            </div>
+            <h3 class="text-white mb-0">MediSys</h3>
+        </div>
+        <div class="card-body">
+            <h4 class="text-center mb-4">Inscription Patient</h4>
+
+            <!-- Messages d'erreur ou de succès -->
+            <div th:if="${successMessage}" class="alert alert-success">
+                <i class="bi bi-check-circle me-2"></i>
+                <span th:text="${successMessage}">Message de succès</span>
+            </div>
+            <div th:if="${errorMessage}" class="alert alert-danger">
+                <i class="bi bi-exclamation-circle me-2"></i>
+                <span th:text="${errorMessage}">Message d'erreur</span>
+            </div>
+
+            <!-- Formulaire d'inscription -->
+            <form th:action="@{/register}" th:object="${user}" method="post">
+                <div class="mb-3">
+                    <label for="nom" class="form-label">Nom complet*</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-person"></i></span>
+                        <input type="text" id="nom" th:field="*{nom}" class="form-control" placeholder="Votre nom complet" required>
+                    </div>
+                    <div class="text-danger" th:if="${#fields.hasErrors('nom')}" th:errors="*{nom}"></div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="username" class="form-label">Nom d'utilisateur*</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-person-badge"></i></span>
+                        <input type="text" id="username" th:field="*{username}" class="form-control" placeholder="Choisissez un nom d'utilisateur" required>
+                    </div>
+                    <div class="text-danger" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email*</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                        <input type="email" id="email" th:field="*{email}" class="form-control" placeholder="Votre adresse email" required>
+                    </div>
+                    <div class="text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="password" class="form-label">Mot de passe*</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                        <input type="password" id="password" th:field="*{password}" class="form-control" placeholder="Choisissez un mot de passe (6 caractères minimum)" required>
+                    </div>
+                    <div class="text-danger" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+                </div>
+
+                <div class="mb-4">
+                    <label for="passwordConfirm" class="form-label">Confirmer le mot de passe*</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
+                        <input type="password" id="passwordConfirm" th:field="*{passwordConfirm}" class="form-control" placeholder="Confirmez votre mot de passe" required>
+                    </div>
+                    <div class="text-danger" th:if="${#fields.hasErrors('passwordConfirm')}" th:errors="*{passwordConfirm}"></div>
+                </div>
+
+                <div class="mb-3 form-check">
+                    <input type="checkbox" class="form-check-input" id="terms" required>
+                    <label class="form-check-label" for="terms">J'accepte les <a href="#" class="text-decoration-none">termes et conditions</a></label>
+                </div>
+
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-person-plus me-2"></i>S'inscrire
+                </button>
+            </form>
+
+            <div class="login-link">
+                <p>Vous avez déjà un compte? <a th:href="@{/login}" class="text-decoration-none">Se connecter</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/webjars/jquery/3.6.4/jquery.min.js"></script>
+<script src="/webjars/bootstrap/5.2.3/js/bootstrap.bundle.js"></script>
+</body>
+</html>

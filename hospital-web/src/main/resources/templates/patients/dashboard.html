@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="fr"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/patient-layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Tableau de bord patient - MediSys</title>
+    <style>
+        .welcome-card {
+            background: linear-gradient(135deg, #20c997 0%, #0ca678 100%);
+            border-radius: 1rem;
+            overflow: hidden;
+            color: white;
+            position: relative;
+        }
+
+        .welcome-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 300px;
+            height: 100%;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"><rect width="200" height="200" fill="none"/><path d="M168.7,50.8C159.3,41.5,143.5,41.5,134.1,50.8L68.3,116.6C58.9,125.9,58.9,141.7,68.3,151L134.1,216.8C143.5,226.1,159.3,226.1,168.7,216.8L234.5,151C243.9,141.7,243.9,125.9,234.5,116.6L168.7,50.8Z" fill="rgba(255,255,255,0.08)"/><path d="M134.1,50.8C124.7,41.5,108.9,41.5,99.5,50.8L33.7,116.6C24.4,125.9,24.4,141.7,33.7,151L99.5,216.8C108.9,226.1,124.7,226.1,134.1,216.8L199.9,151C209.3,141.7,209.3,125.9,199.9,116.6L134.1,50.8Z" fill="rgba(255,255,255,0.08)"/></svg>');
+            background-repeat: no-repeat;
+            background-position: right center;
+            opacity: 0.6;
+            z-index: 0;
+        }
+
+        .welcome-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .health-card {
+            background: white;
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            height: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .health-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+
+        .health-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .appointment-card {
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+
+        .appointment-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+
+        .medication-card {
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+
+        .medication-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+
+        .medication-info {
+            border-radius: 0.5rem;
+            background-color: #f8f9fa;
+            padding: 0.75rem;
+        }
+
+        .dosage-badge {
+            font-size: 0.8rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.375rem;
+        }
+
+        .section-title {
+            position: relative;
+            margin-bottom: 2rem;
+            padding-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background-color: #20c997;
+            border-radius: 3px;
+        }
+
+        .progress {
+            height: 0.8rem;
+            border-radius: 1rem;
+        }
+
+        .progress-bar {
+            border-radius: 1rem;
+        }
+
+        .vital-label {
+            font-size: 0.85rem;
+            color: #6c757d;
+        }
+
+        .vital-value {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .appointment-date {
+            font-size: 0.85rem;
+            color: #495057;
+        }
+
+        .badge-time {
+            background-color: #e9ecef;
+            color: #495057;
+            font-weight: 500;
+        }
+
+        .quick-action-btn {
+            border-radius: 0.75rem;
+            padding: 0.75rem 1.5rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .quick-action-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .reminder-card {
+            background-color: #fff8e1;
+            border-left: 3px solid #ffc107;
+        }
+    </style>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="container py-4">
+        <!-- Section Bienvenue -->
+        <div class="welcome-card p-4 mb-4">
+            <div class="welcome-content">
+                <h2 class="mb-1" th:text="'Bonjour, ' + ${patient.prenom}"></h2>
+                <p class="mb-3">Bienvenue sur votre tableau de bord personnel</p>
+                <div class="d-flex gap-3">
+                    <a href="/patient/rendez-vous/nouveau" class="btn btn-light btn-sm quick-action-btn">
+                        <i class="bi bi-calendar-plus me-2"></i>Prendre rendez-vous
+                    </a>
+                    <a href="/patient/messages" class="btn btn-outline-light btn-sm quick-action-btn">
+                        <i class="bi bi-chat-dots me-2"></i>Messages
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rappels et alertes -->
+        <div class="reminder-card p-3 rounded-3 mb-4" th:if="${!rendezVousProchains.empty}">
+            <div class="d-flex align-items-center">
+                <i class="bi bi-bell-fill me-2 text-warning"></i>
+                <span>Rappel: Vous avez un rendez-vous
+                       <span th:text="${#temporals.format(rendezVousProchains[0].dateHeure, 'dd MMMM')}"></span>
+                       à <span th:text="${#temporals.format(rendezVousProchains[0].dateHeure, 'HH:mm')}"></span>
+                       avec le Dr <span th:text="${rendezVousProchains[0].medecin.nom}"></span>
+                   </span>
+            </div>
+        </div>
+
+        <!-- Indicateurs de santé -->
+        <h3 class="section-title">Indicateurs de santé</h3>
+        <div class="row g-4 mb-5">
+            <div class="col-md-3 col-sm-6">
+                <div class="health-card p-4 text-center">
+                    <div class="health-icon text-primary">
+                        <i class="bi bi-heart-pulse"></i>
+                    </div>
+                    <h5 class="mb-3">Pression artérielle</h5>
+                    <div class="vital-value" th:text="${patient.derniereStat?.tensionArt ?: '120/80'}"></div>
+                    <p class="vital-label mb-2">mmHg</p>
+                    <div class="progress">
+                        <div class="progress-bar bg-primary" role="progressbar" style="width: 85%" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="health-card p-4 text-center">
+                    <div class="health-icon text-success">
+                        <i class="bi bi-activity"></i>
+                    </div>
+                    <h5 class="mb-3">Rythme cardiaque</h5>
+                    <div class="vital-value" th:text="${patient.derniereStat?.pouls ?: '72'}"></div>
+                    <p class="vital-label mb-2">BPM</p>
+                    <div class="progress">
+                        <div class="progress-bar bg-success" role="progressbar" style="width: 75%" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="health-card p-4 text-center">
+                    <div class="health-icon text-warning">
+                        <i class="bi bi-lungs"></i>
+                    </div>
+                    <h5 class="mb-3">Saturation O₂</h5>
+                    <div class="vital-value" th:text="${patient.derniereStat?.saturationO2 ?: '98'}"></div>
+                    <p class="vital-label mb-2">%</p>
+                    <div class="progress">
+                        <div class="progress-bar bg-warning" role="progressbar" style="width: 98%" aria-valuenow="98" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="health-card p-4 text-center">
+                    <div class="health-icon text-info">
+                        <i class="bi bi-droplet"></i>
+                    </div>
+                    <h5 class="mb-3">Glycémie</h5>
+                    <div class="vital-value" th:text="${patient.derniereStat?.glycemie ?: '5.4'}"></div>
+                    <p class="vital-label mb-2">mmol/L</p>
+                    <div class="progress">
+                        <div class="progress-bar bg-info" role="progressbar" style="width: 65%" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Prochains rendez-vous -->
+        <h3 class="section-title">Prochains rendez-vous</h3>
+        <div class="row g-4 mb-5">
+            <div class="col-md-6" th:each="rdv : ${rendezVousProchains}">
+                <div class="appointment-card bg-white p-4">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div>
+                            <h5 class="mb-1" th:text="${rdv.type}">Consultation générale</h5>
+                            <p class="appointment-date mb-0">
+                                <i class="bi bi-calendar3 me-1"></i>
+                                <span th:text="${#temporals.format(rdv.dateHeure, 'EEEE dd MMMM yyyy')}"></span>
+                            </p>
+                        </div>
+                        <span class="badge badge-time px-3 py-2">
+                               <i class="bi bi-clock me-1"></i>
+                               <span th:text="${#temporals.format(rdv.dateHeure, 'HH:mm')}"></span>
+                           </span>
+                    </div>
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="me-3">
+                            <img th:src="${rdv.medecin.photoUrl ?: '/images/doctor-avatar.png'}" alt="Photo médecin" class="rounded-circle" width="50" height="50">
+                        </div>
+                        <div>
+                            <h6 class="mb-0" th:text="'Dr. ' + ${rdv.medecin.prenom + ' ' + rdv.medecin.nom}"></h6>
+                            <small th:text="${rdv.medecin.specialite}">Médecin généraliste</small>
+                        </div>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <a th:href="@{/patient/rendez-vous/{id}(id=${rdv.id})}" class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-info-circle me-1"></i>Détails
+                        </a>
+                        <a th:href="@{/patient/rendez-vous/{id}/modifier(id=${rdv.id})}" class="btn btn-sm btn-outline-secondary">
+                            <i class="bi bi-pencil me-1"></i>Modifier
+                        </a>
+                        <a th:href="@{/patient/rendez-vous/{id}/annuler(id=${rdv.id})}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Êtes-vous sûr de vouloir annuler ce rendez-vous?')">
+                            <i class="bi bi-x-circle me-1"></i>Annuler
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12" th:if="${rendezVousProchains.empty}">
+                <div class="text-center p-4 bg-light rounded-3">
+                    <i class="bi bi-calendar-x d-block mb-3" style="font-size: 2rem;"></i>
+                    <h5>Vous n'avez pas de rendez-vous à venir</h5>
+                    <p class="text-muted">Prenez rendez-vous avec un médecin pour bénéficier d'une consultation</p>
+                    <a href="/patient/rendez-vous/nouveau" class="btn btn-primary">
+                        <i class="bi bi-calendar-plus me-2"></i>Prendre rendez-vous
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Traitements en cours -->
+        <h3 class="section-title">Traitements en cours</h3>
+        <div class="row g-4">
+            <div class="col-md-4" th:each="traitement : ${traitements}">
+                <div class="medication-card bg-white p-4">
+                    <h5 class="mb-2" th:text="${traitement.medicament.nom}">Paracétamol</h5>
+                    <p class="text-muted mb-3" th:text="${traitement.medicament.description}">Analgésique et antipyrétique</p>
+                    <div class="medication-info mb-3">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Posologie:</span>
+                            <span class="fw-bold" th:text="${traitement.posologie}">1000mg</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Fréquence:</span>
+                            <span class="fw-bold" th:text="${traitement.frequence}">3 fois par jour</span>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span>Durée:</span>
+                            <span class="fw-bold" th:text="${traitement.duree + ' jours'}">5 jours</span>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="dosage-badge bg-primary bg-opacity-10 text-primary me-2" th:text="${traitement.voieAdministration}">Orale</span>
+                            <span class="dosage-badge bg-info bg-opacity-10 text-info" th:if="${traitement.avecRepas}">Avec repas</span>
+                        </div>
+                        <a th:href="@{/patient/traitement/{id}(id=${traitement.id})}" class="btn btn-sm btn-link">Plus de détails</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12" th:if="${traitements.empty}">
+                <div class="text-center p-4 bg-light rounded-3">
+                    <i class="bi bi-capsule d-block mb-3" style="font-size: 2rem;"></i>
+                    <h5>Aucun traitement en cours</h5>
+                    <p class="text-muted">Vous n'avez pas de traitements médicamenteux actifs en ce moment</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

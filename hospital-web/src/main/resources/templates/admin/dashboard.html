@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="fr"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/admin-layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Tableau de bord administrateur - MediSys</title>
+    <style>
+        .stats-card {
+            height: 100%;
+            transition: all 0.3s ease;
+            transform: translateY(0);
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .stats-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+        }
+
+        .stats-icon {
+            font-size: 3rem;
+            margin-bottom: 0.75rem;
+            opacity: 0.9;
+        }
+
+        .stats-number {
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin-bottom: 0;
+            line-height: 1.2;
+        }
+
+        .stats-label {
+            font-size: 1.1rem;
+            margin-top: 0.5rem;
+            opacity: 0.9;
+            margin-bottom: 0.5rem;
+        }
+
+        .quick-action {
+            border-radius: 1rem;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            background-color: #fff;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            height: 100%;
+        }
+
+        .quick-action:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+        }
+
+        .quick-action-icon {
+            font-size: 2rem;
+            color: var(--primary-color);
+            transition: all 0.3s ease;
+        }
+
+        .quick-action:hover .quick-action-icon {
+            transform: scale(1.2);
+        }
+
+        .section-title {
+            position: relative;
+            margin-bottom: 2rem;
+            font-weight: 600;
+            color: #333;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -10px;
+            width: 60px;
+            height: 4px;
+            background-color: var(--primary-color);
+            border-radius: 2px;
+        }
+    </style>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="container-fluid py-4 px-4">
+        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center mb-4 border-bottom pb-2">
+            <h1><i class="bi bi-speedometer2 me-2"></i>Tableau de bord administrateur</h1>
+            <div class="btn-toolbar mb-2 mb-md-0">
+                <div class="btn-group me-2">
+                    <button type="button" class="btn btn-sm btn-outline-secondary">
+                        <i class="bi bi-calendar me-1"></i>
+                        <span th:text="${#dates.format(#dates.createNow(), 'dd/MM/yyyy')}">Date</span>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-primary">
+                        <i class="bi bi-download me-1"></i>
+                        Exporter
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistiques -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <h2 class="section-title">Statistiques globales</h2>
+            </div>
+
+            <div class="col-md-4 col-lg-2 mb-4">
+                <div class="stats-card bg-primary text-white p-4 text-center">
+                    <i class="bi bi-people-fill stats-icon"></i>
+                    <p class="stats-number" th:text="${patientCount}">0</p>
+                    <p class="stats-label">Patients</p>
+                </div>
+            </div>
+
+            <div class="col-md-4 col-lg-2 mb-4">
+                <div class="stats-card bg-success text-white p-4 text-center">
+                    <i class="bi bi-person-badge-fill stats-icon"></i>
+                    <p class="stats-number" th:text="${medecinCount}">0</p>
+                    <p class="stats-label">Médecins</p>
+                </div>
+            </div>
+
+            <div class="col-md-4 col-lg-2 mb-4">
+                <div class="stats-card bg-danger text-white p-4 text-center">
+                    <i class="bi bi-building stats-icon"></i>
+                    <p class="stats-number" th:text="${departementCount}">0</p>
+                    <p class="stats-label">Départements</p>
+                </div>
+            </div>
+
+            <div class="col-md-4 col-lg-2 mb-4">
+                <div class="stats-card bg-info text-white p-4 text-center">
+                    <i class="bi bi-calendar-check stats-icon"></i>
+                    <p class="stats-number" th:text="${rendezVousCount}">0</p>
+                    <p class="stats-label">Rendez-vous</p>
+                </div>
+            </div>
+
+            <div class="col-md-4 col-lg-2 mb-4">
+                <div class="stats-card bg-warning text-white p-4 text-center">
+                    <i class="bi bi-capsule stats-icon"></i>
+                    <p class="stats-number" th:text="${medicamentCount}">0</p>
+                    <p class="stats-label">Médicaments</p>
+                </div>
+            </div>
+
+            <div class="col-md-4 col-lg-2 mb-4">
+                <div class="stats-card bg-secondary text-white p-4 text-center">
+                    <i class="bi bi-file-earmark-text stats-icon"></i>
+                    <p class="stats-number" th:text="${prescriptionCount}">0</p>
+                    <p class="stats-label">Prescriptions</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistiques spécifiques admin -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <h2 class="section-title">Administration des comptes</h2>
+            </div>
+
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0"><i class="bi bi-people me-2"></i>Gestion des comptes</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="me-3 flex-shrink-0">
+                                <i class="bi bi-person-badge fs-1 text-primary"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-1">Médecins sans compte</h6>
+                                <div class="d-flex align-items-center">
+                                    <span class="display-6 me-2" th:text="${medecinsSansCompte}">0</span>
+                                    <span class="text-muted">médecins n'ont pas encore de compte utilisateur</span>
+                                </div>
+                            </div>
+                        </div>
+                        <a th:href="@{/admin/medecins}" class="btn btn-outline-primary w-100">
+                            <i class="bi bi-person-plus me-2"></i>Gérer les comptes médecins
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-header bg-secondary text-white">
+                        <h5 class="mb-0"><i class="bi bi-shield-lock me-2"></i>Gestion des utilisateurs</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span>Comptes administrateurs</span>
+                                <span class="badge bg-primary rounded-pill">1</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span>Comptes médecins</span>
+                                <span class="badge bg-success rounded-pill" th:text="${medecinCount - medecinsSansCompte}">0</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span>Comptes patients</span>
+                                <span class="badge bg-info rounded-pill" th:text="${patientCount}">0</span>
+                            </li>
+                        </ul>
+                        <a th:href="@{/admin/users}" class="btn btn-outline-secondary w-100 mt-3">
+                            <i class="bi bi-person-gear me-2"></i>Gérer les utilisateurs
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-header bg-danger text-white">
+                        <h5 class="mb-0"><i class="bi bi-exclamation-triangle me-2"></i>Actions requises</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="bi bi-exclamation-circle text-danger me-2"></i>
+                                <strong>Médecins en attente de compte</strong>
+                            </div>
+                            <p class="text-muted">Il y a <span class="fw-bold" th:text="${medecinsSansCompte}">0</span> médecins qui n'ont pas encore de compte utilisateur.</p>
+                            <div class="progress mb-2" style="height: 10px;">
+                                <div class="progress-bar bg-danger" role="progressbar"
+                                     th:style="'width: ' + ${medecinsSansCompte > 0 ? 100 : 0} + '%'"
+                                     aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        </div>
+                        <a th:href="@{/admin/medecins}" class="btn btn-danger w-100">
+                            <i class="bi bi-arrow-right me-2"></i>Résoudre maintenant
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Actions rapides -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <h2 class="section-title">Actions rapides</h2>
+            </div>
+
+            <div class="col-6 col-md-3 mb-3">
+                <a th:href="@{/admin/medecins}" class="quick-action d-flex flex-column align-items-center p-3 h-100 text-decoration-none">
+                    <i class="bi bi-person-badge quick-action-icon mb-3 text-primary"></i>
+                    <span class="text-dark">Gestion des médecins</span>
+                </a>
+            </div>
+
+            <div class="col-6 col-md-3 mb-3">
+                <a th:href="@{/departements}" class="quick-action d-flex flex-column align-items-center p-3 h-100 text-decoration-none">
+                    <i class="bi bi-building quick-action-icon mb-3 text-danger"></i>
+                    <span class="text-dark">Gestion des départements</span>
+                </a>
+            </div>
+
+            <div class="col-6 col-md-3 mb-3">
+                <a th:href="@{/admin/users}" class="quick-action d-flex flex-column align-items-center p-3 h-100 text-decoration-none">
+                    <i class="bi bi-people quick-action-icon mb-3 text-success"></i>
+                    <span class="text-dark">Gestion des utilisateurs</span>
+                </a>
+            </div>
+
+            <div class="col-6 col-md-3 mb-3">
+                <a th:href="@{/medicaments}" class="quick-action d-flex flex-column align-items-center p-3 h-100 text-decoration-none">
+                    <i class="bi bi-capsule quick-action-icon mb-3 text-warning"></i>
+                    <span class="text-dark">Gestion des médicaments</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Activité récente -->
+        <div class="row">
+            <div class="col-12">
+                <h2 class="section-title">Activité récente</h2>
+            </div>
+
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0"><i class="bi bi-calendar-check me-2"></i>Rendez-vous récents</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="list-group list-group-flush">
+                            <div class="list-group-item">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h6 class="mb-1">Consultation Dr. Dupont</h6>
+                                    <small class="text-muted">il y a 3 heures</small>
+                                </div>
+                                <p class="mb-1">Patient: Jean Martin</p>
+                                <small class="text-success">Statut: Terminé</small>
+                            </div>
+                            <div class="list-group-item">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h6 class="mb-1">Consultation Dr. Benkirane</h6>
+                                    <small class="text-muted">il y a 5 heures</small>
+                                </div>
+                                <p class="mb-1">Patient: Sophie Bernard</p>
+                                <small class="text-success">Statut: Terminé</small>
+                            </div>
+                            <div class="list-group-item">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h6 class="mb-1">Consultation Dr. Martin</h6>
+                                    <small class="text-muted">il y a 8 heures</small>
+                                </div>
+                                <p class="mb-1">Patient: Pierre Leclerc</p>
+                                <small class="text-danger">Statut: Annulé</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer text-end">
+                        <a th:href="@{/rendezvous}" class="btn btn-sm btn-outline-info">Voir tous les rendez-vous</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-header bg-warning text-white">
+                        <h5 class="mb-0"><i class="bi bi-exclamation-triangle me-2"></i>Alertes récentes</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="list-group list-group-flush">
+                            <div class="list-group-item">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h6 class="mb-1">Stock faible: Doliprane</h6>
+                                    <small class="text-muted">il y a 1 jour</small>
+                                </div>
+                                <p class="mb-1">Le stock est en dessous du seuil d'alerte (10 unités)</p>
+                                <small class="text-danger">Stock actuel: 5 unités</small>
+                            </div>
+                            <div class="list-group-item">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h6 class="mb-1">Stock faible: Advil</h6>
+                                    <small class="text-muted">il y a 2 jours</small>
+                                </div>
+                                <p class="mb-1">Le stock est en dessous du seuil d'alerte (15 unités)</p>
+                                <small class="text-danger">Stock actuel: 8 unités</small>
+                            </div>
+                            <div class="list-group-item">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h6 class="mb-1">Création de compte</h6>
+                                    <small class="text-muted">il y a 3 jours</small>
+                                </div>
+                                <p class="mb-1">Nouveau compte patient créé: Marie Martin</p>
+                                <small class="text-success">Statut: Actif</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer text-end">
+                        <a th:href="@{/medicaments/alerte}" class="btn btn-sm btn-outline-warning">Voir toutes les alertes</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
