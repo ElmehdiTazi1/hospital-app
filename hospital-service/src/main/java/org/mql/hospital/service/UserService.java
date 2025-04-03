@@ -263,4 +263,10 @@ public class UserService {
         user.setRoles(roles);
         return userRepository.save(user);
     }
+    @Transactional(readOnly = true)
+    public boolean adminExists() {
+        return userRepository.findAll().stream()
+                .anyMatch(user -> user.getRoles().stream()
+                        .anyMatch(role -> role.getName().equals("ROLE_ADMIN")));
+    }
 }

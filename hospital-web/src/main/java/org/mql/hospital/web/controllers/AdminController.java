@@ -3,7 +3,6 @@ package org.mql.hospital.web.controllers;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.mql.hospital.entities.Medecin;
-import org.mql.hospital.entities.User;
 import org.mql.hospital.service.*;
 import org.mql.hospital.service.UserRegistrationDto;
 import org.springframework.data.domain.Page;
@@ -27,6 +26,7 @@ import java.util.Map;
 @PreAuthorize("hasRole('ADMIN')")
 @RequiredArgsConstructor
 @Slf4j
+
 public class AdminController {
 
     private final DashboardService dashboardService;
@@ -49,7 +49,7 @@ public class AdminController {
         // Statistiques supplémentaires spécifiques à l'admin
         model.addAttribute("medecinsSansCompte", countMedecinsSansCompte());
 
-        return "admin/dashboard";
+        return "dashboard";
     }
 
     /**

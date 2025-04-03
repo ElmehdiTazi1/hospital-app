@@ -1,5 +1,6 @@
 package org.mql.hospital.service;
 
+import org.mql.hospital.service.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -15,13 +16,14 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
-
 public class SecurityConfig {
 
     private final CustomUserDetailsService userDetailsService;
+
     public SecurityConfig(CustomUserDetailsService userDetailsService) {
         this.userDetailsService = userDetailsService;
     }
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -34,7 +36,7 @@ public class SecurityConfig {
                         // Ressources publiques
                         .requestMatchers("/css/**", "/js/**", "/webjars/**", "/images/**").permitAll()
                         // Pages publiques
-                        .requestMatchers("/login", "/register", "/forgot-password", "/error").permitAll()
+                        .requestMatchers("/", "/home", "/login", "/register", "/forgot-password", "/error").permitAll()
                         // Pages pour les administrateurs
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         // Pages pour les médecins
@@ -77,5 +79,3 @@ public class SecurityConfig {
         return builder.build();
     }
 }
-
-
